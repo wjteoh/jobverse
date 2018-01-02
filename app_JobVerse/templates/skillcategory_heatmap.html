@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+
+<script src="http://d3js.org/d3.v3.js"></script>
+<script src="http://d3js.org/colorbrewer.v1.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+<script type="text/javascript">
+    // var classesNumber = 10,
+    var classesNumber = 9,
+        cellSize = 18;
+
+    var optimized = 45;
+
+    //#########################################################
+    function heatmap_display(url, heatmapId, paletteName) {
+
+        //==================================================
+        // References
+        // http://bl.ocks.org/Soylent/bbff6cc507dca2f48792
+        // http://bost.ocks.org/mike/selection/
+        // http://bost.ocks.org/mike/join/
+        // http://stackoverflow.com/questions/9481497/understanding-how-d3-js-binds-data-to-nodes
+        // http://bost.ocks.org/mike/miserables/
+        // http://bl.ocks.org/ianyfchang/8119685
+
+        //==================================================
+        var tooltip = d3.select(heatmapId)
+            .append("div")
+            .style("position", "absolute")
+            .style("visibility", "hidden");
+
+        //==================================================
+        // http://bl.ocks.org/mbostock/3680958
+        function zoom() {
+            svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+        }
+
+        // define the zoomListener which calls the zoom function on the "zoom" event constrained within the scaleExtents
+        var zoomListener = d3.behavior.zoom().scaleExtent([0.7, 3]).on("zoom", zoom);
+
+        //==================================================
+        var viewerWidth = $(document).width() - 10;
+        var viewerHeight = $(document).height() - 11;
+        // var viewerPosTop = 200;
+        // var viewerPosLeft = 100;
+        var viewerPosTop = 90;
+        var viewerPosLeft = 50;
+
+        // var legendElementWidth = cellSize * 2;
+        var legendElementWidth = cellSize * 3;
+
+        // http://bl.ocks.org/mbostock/5577023
+        var colors = colorbrewer[paletteName][classesNumber];
+
+        // http://bl.ocks.org/mbostock/3680999
+        var svg;
+
+        //==================================================
+        d3.json(url, function(error, data) {
+
+            //console.log(data);
+            var arr = data.data;
+            var data_all = [];
+            arr.forEach(function(d_row){
+                d_row.forEach(function(d){
+                    // console.log("d", d);
+                    data_all.push(d);
+                });
+            });
+
+            var min_weight = d3.min(data_all);
+            var ori_min_weight = [min_weight].slice(0);
+            var max_weight = d3.max(data_all);
+            console.log("min_weight: ", min_weight, ", min_weight: ", max_weight);
+
+
+            var row_number = arr.length;
+            var col_number = arr[0].length;
+            //console.log(col_number, row_number);
+
+            var colorScale = d3.scale.quantize()
+                // .domain([0.0, 1.0])
+                .domain([ori_min_weight, max_weight])
+                .range(colors);
+
+            svg = d3.select(heatmapId).append("svg")
+                .attr("width", viewerWidth)
+                .attr("height", viewerHeight)
+            .call(zoomListener)
+                .append("g")
+                .attr("transform", "translate(" + viewerPosLeft + "," + viewerPosTop + ")");
+
+            svg.append('defs')
+                .append('pattern')
+                .attr('id', 'diagonalHatch')
+                .attr('patternUnits', 'userSpaceOnUse')
+                .attr('width', 4)
+                .attr('height', 4)
+                .append('path')
+                .attr('d', 'M-1,1 l2,-2 M0,4 l4,-4 M3,5 l2,-2')
+                .attr('stroke', '#000000')
+                .attr('stroke-width', 1);
+
+            var rowSortOrder = false;
+            var colSortOrder = false;
+
+            var rowLabels = svg.append("g")
+                .attr("class", "rowLabels")
+                .selectAll(".rowLabel")
+                .data(data.index)
+                .enter().append("text")
+                .text(function(d) {
+                    return d.count > 1 ? d.join("/") : d;
+                })
+                .attr("x", 0)
+                .attr("y", function(d, i) {
+                    return (i * cellSize);
+                })
+                .style("text-anchor", "end")
+                .attr("transform", function(d, i) {
+                    return "translate(-3," + cellSize / 1.5 + ")";
+                })
+                .attr("class", "rowLabel mono")
+                .attr("id", function(d, i) {
+                    return "rowLabel_" + i;
+                })
+                .on('mouseover', function(d, i) {
+                    d3.select('#rowLabel_' + i).classed("hover", true);
+                })
+                .on('mouseout', function(d, i) {
+                    d3.select('#rowLabel_' + i).classed("hover", false);
+                })
+                .on("click", function(d, i) {
+                    rowSortOrder = !rowSortOrder;
+                    sortByValues("r", i, rowSortOrder);
+                    d3.select("#order").property("selectedIndex", 0);
+                    //$("#order").jqxComboBox({selectedIndex: 0});
+                });
+
+            var colLabels = svg.append("g")
+                .attr("class", "colLabels")
+                .selectAll(".colLabel")
+                .data(data.columns)
+                .enter().append("text")
+                .text(function(d) {
+                    d.shift();
+                    return d.count > 1 ? d.reverse().join("/") : d.reverse();
+                })
+                .attr("x", 0)
+                .attr("y", function(d, i) {
+                    // return (i * cellSize);
+                    return (i * optimized);
+                })
+                .style("text-anchor", "left")
+                .attr("transform", function(d, i) {
+                    // return "translate(" + cellSize / 2 + ", -3) rotate(-90) rotate(45, 0, " + (i * cellSize) + ")";
+                    return "translate(" + cellSize / 2 + ", -3) rotate(-90) rotate(70, 0, " + (i * optimized) + ")";
+                })
+                .attr("class", "colLabel mono")
+                .attr("id", function(d, i) {
+                    return "colLabel_" + i;
+                })
+                .on('mouseover', function(d, i) {
+                    d3.select('#colLabel_' + i).classed("hover", true);
+                })
+                .on('mouseout', function(d, i) {
+                    d3.select('#colLabel_' + i).classed("hover", false);
+                })
+                .on("click", function(d, i) {
+                    colSortOrder = !colSortOrder;
+                    sortByValues("c", i, colSortOrder);
+                    d3.select("#order").property("selectedIndex", 0);
+                });
+
+            var row = svg.selectAll(".row")
+                .data(data.data)
+                .enter().append("g")
+                .attr("id", function(d) {
+                    return d.idx;
+                })
+                .attr("class", "row");
+
+            var j = 0;
+            var heatMap = row.selectAll(".cell")
+                .data(function(d) {
+                    j++;
+                    return d;
+                })
+                .enter().append("svg:rect")
+                .attr("x", function(d, i) {
+                    // return i * cellSize;
+                    return i * optimized;
+                })
+                .attr("y", function(d, i, j) {
+                    return j * cellSize;
+                })
+                .attr("rx", 4)
+                .attr("ry", 4)
+                .attr("class", function(d, i, j) {
+                    return "cell bordered cr" + j + " cc" + i;
+                })
+                .attr("row", function(d, i, j) {
+                    return j;
+                })
+                .attr("col", function(d, i, j) {
+                    return i;
+                })
+                // .attr("width", cellSize)
+                .attr("width", optimized)
+                .attr("height", cellSize)
+                .style("fill", function(d, i, j) {
+                    // console.log("d",d, i, j);
+                    // if (d != null) return colorScale(d);
+                    // if (d != null) return ColorbyROW(d, j);
+                    if (d != null) return ColorbyROW(d, j);
+                    else return "url(#diagonalHatch)";
+                })
+                .on('mouseover', function(d, i, j) {
+                    d3.select('#colLabel_' + i).classed("hover", true);
+                    d3.select('#rowLabel_' + j).classed("hover", true);
+                    // d3.selectAll('.cr' + j).classed("row_hl", true);
+                    
+                    if (d != null) {
+                        // tooltip.html('<div class="heatmap_tooltip">' + d.toFixed(3) + '</div>');
+                        var cur_col_data = [];
+                        d3.selectAll(".cc"+i).filter(function(d){
+                            cur_col_data.push(d);
+                        });
+                        var max_weight_col = d3.max(cur_col_data);
+                        // desc = 'Skill Group: '+$('#rowLabel_' + j).text()+'<br>Category: '+$('#colLabel_' + i).text()+'<br>weighted at ' + d.toFixed(3)
+                        //         + ' out of ' + max_weight_col.toFixed(3);
+                        desc = d.toFixed(3)+ ' out of ' + max_weight_col.toFixed(3) + ' (Column Max)';
+                        tooltip.html('<div class="heatmap_tooltip">' + desc + '</div>');
+                        tooltip.style("visibility", "visible");
+                    } else
+                        tooltip.style("visibility", "hidden");
+                })
+                .on('mouseout', function(d, i, j) {
+                    d3.select('#colLabel_' + i).classed("hover", false);
+                    d3.select('#rowLabel_' + j).classed("hover", false);
+                    // d3.selectAll('.cr' + j).classed("row_hl", false);
+                    tooltip.style("visibility", "hidden");
+                })
+                .on("mousemove", function(d, i) {
+                    // tooltip.style("top", (d3.event.pageY - 55) + "px").style("left", (d3.event.pageX - 60) + "px");
+                    tooltip.style("top", (d3.event.pageY - 55) + "px").style("left", (d3.event.pageX - 163) + "px");
+                })
+                .on('click', function() {
+                    //console.log(d3.select(this));
+                });
+
+            var numTicks = 10;
+            var diff_maxmin = max_weight - min_weight;
+            var increment = diff_maxmin / numTicks;
+            var legend_data = [];
+            // for (i = min_weight; i <= max_weight; i+increment) {
+            //     legend_data.push(i);
+            // }
+            while(min_weight < max_weight - increment){
+                legend_data.push(min_weight+increment);
+                min_weight += increment;
+            }
+            console.log("legend_data", legend_data);
+
+            var legend = svg.append("g")
+                .attr("class", "legend")
+                // .attr("transform", "translate(0,-300)")
+                .attr("transform", "translate(-550,-200)")
+                .selectAll(".legendElement")
+                // .data([0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+                .data(legend_data)
+                .enter().append("g")
+                .attr("class", "legendElement");
+
+            legend.append("svg:rect")
+                .attr("x", function(d, i) {
+                    return legendElementWidth * i;
+                })
+                .attr("y", viewerPosTop)
+                .attr("class", "cellLegend bordered")
+                .attr("width", legendElementWidth)
+                // .attr("height", cellSize / 2)
+                .attr("height", cellSize)
+                .style("fill", function(d, i) {
+                    return colors[i];
+                });
+
+            // legend.append("text")
+            //     .attr("class", "mono legendElement")
+            //     .text(function(d) {
+            //         return "≥" + Math.round(d * 100) / 100;
+            //     })
+            //     .attr("x", function(d, i) {
+            //         return legendElementWidth * i;
+            //     })
+            //     // .attr("y", viewerPosTop + cellSize);
+            //     .attr("y", viewerPosTop + (2*cellSize));
+
+            legend.append("text").attr("x",-5).attr("y",104)
+                .attr("class", "mono legendElement")
+                .style("text-anchor","end")
+                .text("Less relevant");
+            legend.append("text").attr("x", 550).attr("y",104)
+                .attr("class", "mono legendElement")
+                .style("text-anchor","start")
+                .text("More relevant");
+
+            //==================================================
+            // Color cells by row
+            function ColorbyROW(row_data, row){
+                var cur_row_data = [];
+                d3.selectAll(".cr"+row).filter(function(d){
+                    cur_row_data.push(d);
+                });
+                var min_weight_row = d3.min(cur_row_data);
+                var max_weight_row = d3.max(cur_row_data);
+                var colorScale2 = d3.scale.quantize()
+                    .domain([min_weight_row, max_weight_row])  //by row
+                    .range(colors);
+                // var colorScale2 = d3.scale.linear()
+                //     .domain([min_weight_row, max_weight_row])  //by row                  
+                //     .interpolate(d3.interpolateRgb)
+                //     .range(["white", "#353535"]);
+                return colorScale2(row_data);
+            }
+
+            //==================================================
+            // Color cells by column
+            function ColorbyCOL(col_data, col){
+                var cur_col_data = [];
+                d3.selectAll(".cc"+col).filter(function(d){
+                    cur_col_data.push(d);
+                });
+                var min_weight_col = d3.min(cur_col_data);
+                var max_weight_col = d3.max(cur_col_data);
+                var colorScale2 = d3.scale.quantize()
+                    .domain([min_weight_col, max_weight_col])  //by row
+                    .range(colors);
+                // var colorScale2 = d3.scale.linear()
+                //     .domain([min_weight_row, max_weight_row])  //by row                  
+                //     .interpolate(d3.interpolateRgb)
+                //     .range(["white", "#353535"]);
+                return colorScale2(col_data);
+            }
+
+            //==================================================
+            // Change ordering of cells
+            function sortByValues(rORc, i, sortOrder) {
+                var t = svg.transition().duration(1000);
+                var values = [];
+                var sorted;
+                d3.selectAll(".c" + rORc + i)
+                    .filter(function(d) {
+                        if (d != null) values.push(d);
+                        else values.push(-999); // to handle NaN
+                    });
+                //console.log(values);      
+                if (rORc == "r") { // sort on cols
+                    sorted = d3.range(col_number).sort(function(a, b) {
+                        if (sortOrder) {
+                            return values[b] - values[a];
+                        } else {
+                            // return values[a] - values[b];
+                            return values[b] - values[a];  // always descending
+                        }
+                    });
+                    t.selectAll(".cell")
+                        .attr("x", function(d) {
+                            var col = parseInt(d3.select(this).attr("col"));
+                            // return sorted.indexOf(col) * cellSize;
+                            return sorted.indexOf(col) * optimized;
+                        })
+                        .style("fill", function(d) {
+                            // if (d != null) return colorScale(d);
+                            if (d != null) return ColorbyROW(d, $(this).attr("row"));
+                            else return "url(#diagonalHatch)";
+                        });
+                    t.selectAll(".colLabel")
+                        .attr("y", function(d, i) {
+                            // return sorted.indexOf(i) * cellSize;
+                            return sorted.indexOf(i) * optimized;
+                        })
+                        .attr("transform", function(d, i) {
+                            // return "translate(" + cellSize / 2 + ", -3) rotate(-90) rotate(45, 0, " + (sorted.indexOf(i) * cellSize) + ")";
+                            return "translate(" + cellSize / 2 + ", -3) rotate(-90) rotate(70, 0, " + (sorted.indexOf(i) * optimized) + ")";
+                        });
+                    // update clicked status
+                    $("#last_clicked").text("Row : "+ $("#rowLabel_"+i).text());
+                } else { // sort on rows
+                    sorted = d3.range(row_number).sort(function(a, b) {
+                        if (sortOrder) {
+                            return values[b] - values[a];
+                        } else {
+                            // return values[a] - values[b];
+                            return values[b] - values[a];
+                        }
+                    });
+                    t.selectAll(".cell")
+                        .attr("y", function(d) {
+                            var row = parseInt(d3.select(this).attr("row"));
+                            return sorted.indexOf(row) * cellSize;
+                            // return sorted.indexOf(row) * optimized;
+                        })
+                        .style("fill", function(d) {
+                            // if (d != null) return colorScale(d);
+                            if (d != null) return ColorbyCOL(d, $(this).attr("col"));
+                            else return "url(#diagonalHatch)";
+                        });
+                    t.selectAll(".rowLabel")
+                        .attr("y", function(d, i) {
+                            return sorted.indexOf(i) * cellSize;
+                            // return sorted.indexOf(i) * optimized;
+                        })
+                        .attr("transform", function(d, i) {
+                            return "translate(-3," + cellSize / 1.5 + ")";
+                        });
+                    // update clicked status
+                    $("#last_clicked").text("Column: " + $("#colLabel_"+i).text());
+                }
+            }
+
+            //==================================================
+            d3.select("#order").on("change", function() {
+            var newOrder = d3.select("#order").property("value");   
+                changeOrder(newOrder, heatmapId);
+            });
+
+            //==================================================
+            d3.select("#palette")
+                .on("keyup", function() {
+            var newPalette = d3.select("#palette").property("value");
+            if (newPalette != null)                     // when interfaced with jQwidget, the ComboBox handles keyup event but value is then not available ?
+                        changePalette(newPalette, heatmapId);
+                })
+                .on("change", function() {
+            var newPalette = d3.select("#palette").property("value");
+                    changePalette(newPalette, heatmapId);
+                });
+        });
+        //==================================================d3.json
+    }
+
+    //#########################################################
+    function changeOrder(newOrder, heatmapId) {
+        var svg = d3.select(heatmapId);
+        var t = svg.transition().duration(1000);
+        if (newOrder == "sortinit_col") { // initial sort on cols (alphabetically if produced like this)
+            t.selectAll(".cell")
+                .attr("x", function(d) {
+                    var col = parseInt(d3.select(this).attr("col"));
+                    // return col * cellSize;
+                    return col * optimized;
+                });
+            t.selectAll(".colLabel")
+                .attr("y", function(d, i) {
+                    // return i * cellSize;
+                    return i * optimized;
+                })
+                .attr("transform", function(d, i) {
+                    // return "translate(" + cellSize / 2 + ", -3) rotate(-90) rotate(45, 0, " + (i * cellSize) + ")";
+                    return "translate(" + cellSize / 2 + ", -3) rotate(-90) rotate(70, 0, " + (i * optimized) + ")";
+                });
+        } else if (newOrder == "sortinit_row") { // initial sort on rows (alphabetically if produced like this)
+            t.selectAll(".cell")
+                .attr("y", function(d) {
+                    var row = parseInt(d3.select(this).attr("row"));
+                    return row * cellSize;
+                });
+            t.selectAll(".rowLabel")
+                .attr("y", function(d, i) {
+                    return i * cellSize;
+                })
+                .attr("transform", function(d, i) {
+                    return "translate(-3," + cellSize / 1.5 + ")";
+                });
+        } else if (newOrder == "sortinit_col_row") { // initial sort on rows and cols (alphabetically if produced like this)
+            t.selectAll(".cell")
+                .attr("x", function(d) {
+                    var col = parseInt(d3.select(this).attr("col"));
+                    // return col * cellSize;
+                    return col * optimized;
+                })
+                .attr("y", function(d) {
+                    var row = parseInt(d3.select(this).attr("row"));
+                    return row * cellSize;
+                });
+            t.selectAll(".colLabel")
+                .attr("y", function(d, i) {
+                    // return i * cellSize;
+                    return i * optimized;
+                })
+                .attr("transform", function(d, i) {
+                    // return "translate(" + cellSize / 2 + ", -3) rotate(-90) rotate(45, 0, " + (i * cellSize) + ")";
+                    return "translate(" + cellSize / 2 + ", -3) rotate(-90) rotate(70, 0, " + (i * optimized) + ")";
+                });
+            t.selectAll(".rowLabel")
+                .attr("y", function(d, i) {
+                    return i * cellSize;
+                })
+                .attr("transform", function(d, i) {
+                    return "translate(-3," + cellSize / 1.5 + ")";
+                });
+        }
+    }
+
+    //#########################################################
+    function changePalette(paletteName, heatmapId) {
+        // console.log("min_weight: ", min_weight);
+        var colors = colorbrewer[paletteName][classesNumber];
+        // var colorScale = d3.scale.quantize()
+        //     // .domain([0.0, 1.0])
+        //     .domain([min_weight, max_weight])
+        //     .range(colors);
+        var svg = d3.select(heatmapId);
+        var t = svg.transition().duration(500);
+        function ColorbyROW(row_data, row){
+            var cur_row_data = [];
+            d3.selectAll(".cr"+row).filter(function(d){
+                cur_row_data.push(d);
+            });
+            var min_weight_row = d3.min(cur_row_data);
+            var max_weight_row = d3.max(cur_row_data);
+            var colorScale2 = d3.scale.quantize()
+                .domain([min_weight_row, max_weight_row])  //by row
+                .range(colors);
+            return colorScale2(row_data);
+        }
+        t.selectAll(".cell")
+            .style("fill", function(d) {
+                    // if (d != null) return colorScale(d);
+                    if (d != null) return ColorbyROW(d, $(this).attr("row"));
+                    else return "url(#diagonalHatch)";
+            })
+        t.selectAll(".cellLegend")
+            .style("fill", function(d, i) {
+                return colors[i];
+            });
+    }
+</script>
+<!-- <link rel="stylesheet" href="heatmap.css" /> -->
+
+<head>
+
+<script>
+$(document).ready(function() {
+    var DATA_URL = '/data/';
+    heatmap_display(DATA_URL + "skill_analysis/heatmap/", "#heatmap", "Blues");
+});
+</script>
+
+</head>
+<style>
+    .heatmap {
+      font-size: 8px;
+      font-family: monospace;
+    }
+    rect.bordered {
+      stroke: #E6E6E6;
+      stroke-width:2px;   
+    }
+    text.mono {
+      font-size: 15px;
+      font-family: monospace;
+      fill: #000;
+    }
+    text.legendElement {
+      font-size: 15px;
+    }
+    text.hover {
+      font-weight: bold;
+      fill: #66F;
+      font-background: #000;
+      cursor: pointer;
+    }
+    .heatmap_tooltip {
+      text-align: center;
+      font-family: monospace;
+      font-size: 14pt;
+      color: #000;
+      position: relative;
+      background: rgba(255, 255, 255, 0.8);
+      border: 4px solid #66F;
+      padding: 5px;
+      border-radius: 8px ;
+      -webkit-border-top-left-radius: 8px;
+      -webkit-border-top-right-radius: 8px;
+      -webkit-border-bottom-right-radius: 8px;
+      -webkit-border-bottom-left-radius: 8px;
+      -khtml-border-top-left-radius: 8px;
+      -khtml-border-top-right-radius: 8px;
+      -khtml-border-bottom-right-radius: 8px;
+      -khtml-border-bottom-left-radius: 8px;
+      -moz-border-radius-topleft: 8px;
+      -moz-border-radius-topright: 8px;
+      -moz-border-radius-bottomright: 8px;
+      -moz-border-radius-bottomleft: 8px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+      border-bottom-left-radius: 8px;
+      /*width: 100px;*/
+      width: auto;
+      z-index:10000;
+      -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
+      -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.8);
+    }
+    .heatmap_tooltip:after, .heatmap_tooltip:before {
+      top: 100%;
+      border: solid transparent;
+      content: " ";
+      height: 0;
+      width: 0;
+      position: absolute;
+      pointer-events: none;
+    }
+    .heatmap_tooltip:after {
+      border-color: rgba(236, 240, 241, 0);
+      border-top-color: #FFFFF;
+      border-width: 10px;
+      left: 50%;
+      margin-left: -10px;
+    }
+    .heatmap_tooltip:before {
+      border-color: rgba(44, 62, 80, 0);
+      border-top-color: #66F;
+      border-width: 16px;
+      left: 50%;
+      margin-left: -16px;
+    }
+    .controls{
+        display: inline-block;
+        padding: 10px;
+        background-color: lightgrey;
+        border-radius: 4px;
+        position: absolute;
+    }
+    rect.row_hl{
+        stroke: red;
+        stroke-width: 2px;
+    }
+</style>
+
+<body style="margin: 3px;">
+<div class="controls">
+    Order:
+    <select id="order">
+      <option value="null" selected> ----- </option>
+      <option value="sortinit_col_row">Initial order on columns and rows</option>
+      <option value="sortinit_row">Initial order on rows</option>
+      <option value="sortinit_col">Initial order on columns</option>
+    </select>
+
+    Palette:
+    <select id="palette">
+      <option value="RdYlGn">RdYlGn</option>
+      <option value="Spectral">Spectral</option>
+      <option value="Blues" selected>Blues</option>
+
+
+    </select>
+    Last clicked: <span id="last_clicked"></span>
+</div>
+<div id="heatmap"></div>
+
+</body>
+</html>

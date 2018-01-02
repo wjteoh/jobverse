@@ -1,0 +1,92 @@
+.node { stroke: #fff; stroke-width: 1.5px; }
+.node-active { stroke: #555; stroke-width: 1.8px; }
+.node-hidden { visibility: hidden; }
+.node-visible { visibility: visible; }
+
+.link { stroke: #adadad; stroke-opacity: .0; }
+
+.circle-ticks{ stroke: #CCC; opacity: 0.5; fill: none;}
+.circle-focus{ stroke: black; visibility: hidden; fill: none;}
+
+.domfunc_filter_active{
+    -webkit-text-fill-color: lightgreen;
+}
+
+#close{ z-index: 2; display:block; float:right; position: absolute; width:15px; height:15px; top: 0px; right: 1px; }
+#close_skill{ z-index: 4; display:block; margin-right: -6px; margin-top: -8px; width:15px; height:15px; }
+
+.skill_exit{ visibility: hidden; display: inline-block; position: absolute; }
+.material-icons {
+    font-size: 16px;
+    background-color: #d2d2d2;
+    font-weight: bold;
+    color: black;
+    border-radius: 6px;
+}
+
+.toptitle_skill{
+    font-size: 21px;
+    text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+}
+
+.ui-autocomplete { max-height: 500px; overflow-y: auto; overflow-x: hidden;}
+
+.center-align{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+a.toptitles{
+    color:black;
+}
+div.toptitles_hl{
+    background-color: #18bd88;
+    border-radius: 10px;
+    color: white;
+}
+
+a.inactive{
+    cursor: not-allowed;
+    opacity: 0.4;
+}
+a.inactive:hover{
+    color: #3c3c3c;
+}
+
+.topcontainer { height: 5%; }
+.logo img { height: -webkit-fill-available; margin-left: 15%; margin-right: 85%; display: block; width: auto;}
+.header .colb { height: 100%; }
+.popupmid{ background-color: white; }
+.popupctn{ display:inline-block; position: fixed; visibility: hidden; width: auto; z-index: 99; max-width: 30%; min-width: 13%;}
+.navi ul { height: 100%; }
+.navi ul li { height: 100%; }
+.bottomcontainer { height: 95%; }
+.joblists{ position: relative; width: 100%; height: 70%; overflow: unset;}
+.bg .colc { position: absolute; }
+
+.skill2 { padding: 3px 12px; display: inline-block; background-color: #d1ec9c; min-width: 40px; font-size: 12px; border-radius: 15px;
+                vertical-align: top; text-align: center; color: black; border: 1.3px solid white }
+.skillctn { margin-bottom: 1px; text-align: center;}
+/*.skillctn:hover{ background-color: none; border-radius: 15px; cursor: pointer; color: white;}*/
+.skillctn:hover{ background-color: none; border-radius: 15px; color: white;}
+/*.skillcloud_hl {border: 2px solid black;}*/
+.skillcloud_hl { background-color: #3180bb; color: white; cursor: default; }
+.skill_mouseover { border: 2px solid black; cursor: pointer;}
+
+.disable_pointer { cursor: default; }
+.skillsbar{ height: -webkit-fill-available; position: absolute; display: inline-block; width: -webkit-fill-available; }
+.skills_100{ position: relative; height: 100%; }
+.skills_80{ position: relative; height: 80%; }
+.skills_50{ position: relative; height: 50%; }
+.skills_20{ position: relative; height: 20%; }
+
+#skill_in_toptitles{ display: inline-block; height: 25px; }
+
+#dvToptitles_container{ overflow: auto; height: 93%; }
+
+.title_in_skillbar_CNTR{ display: none; font-size: 16px; }
+.title_in_skillbar{ font-size: 24px; }
+.skillcloud { display: table; margin: auto;}
+#title_in_skillbar{ color: #3180bb; }
+.shrink_label{ font-size: 19px; }

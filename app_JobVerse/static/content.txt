@@ -1,0 +1,7 @@
+Data folder contains:
+
+-master_dist_mtx.npy
+-1Hdist_mtx.npy
+-2Hdist_mtx.npy
+-parsed_titles.csv
+-titles_index.csv

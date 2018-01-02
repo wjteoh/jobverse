@@ -1,0 +1,378 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>Job Analytics - Job Title Analysis</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/normalize.css') }}" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/style.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/form.css') }}" >
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/style_edit.css') }}" >
+    <script src="https://use.fontawesome.com/b4d97f0552.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css">
+</head>
+
+<style type="text/css">
+    .loader {
+        text-align: center;
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: url('{{ url_for('static',filename='css/jobtitle_analysis/loader.gif') }}') 50% 40% no-repeat rgb(249,249,249);
+    }
+    .hpbottom .colb {
+        width: 75%;
+    }
+
+    .link {
+      /*stroke: grey;*/
+      stroke-opacity: 1;
+    }
+</style>
+
+<body>
+<div class="maincontainer">
+     <div class="topcontainer header">
+        <div class="col cola">
+            <div class="logo">
+                <img src="{{ url_for('static',filename='new/images/logo2.png') }}" alt=""/> 
+            </div>
+        </div><div class="col colb">
+            <div class=" navi">
+                <ul>
+                    <a href="{{ url_for('relationbPGraph', rel_type='category') }}"><li><div class="padding">Job Category Analysis</div>
+                    </li></a><a href="{{ url_for('relationbPGraph', rel_type='role') }}"><li><div class="padding">Job Role Analysis</div>
+                    </li></a><a href="{{ url_for('relationbPGraph', rel_type='skill_group') }}"><li><div class="padding">Skills Analysis</div>
+                    </li></a><a href="#"><li class="current"><div class="padding">Job Title Analysis</div></li></a>
+                </ul>
+            </div>
+        </div><!-- Col b / Search -->
+    </div><!--Top Container -->
+    <!-- <div class="loader">
+        <span style="display:block;margin-top: 28%;">Loading graph of <span style="font-weight: bold;" id="mainjob_title_loader"></span>...</span>
+    </div> -->
+    <div class="bottomcontainer hpbottom">
+        <div class="col cola bg">
+            <div class="joblistsbar">
+                <div class="padding">
+                    <div class="scoretxt">Jobs similarity score above</div> <div class="score"><span id="sliderval"></span></div>
+                    <div>
+                        <input type="range" id="thresholdSlider" step="#" name="points" value="#" min="#" max="#" 
+                            onchange="threshold(this.value)" style="width: 80%;">
+                            <!-- <img src="images/bar.jpg" width="285" height="27" alt=""/> -->
+                    </div>
+                    <div class="dashboard">
+                        <div>
+                            <div class="col cola"> Total # of similar job titles</div>
+                            <div class="col colb"><text id="nodenum"></text></div>
+                            <div class="col colc">
+                                <a id="fil_all" class="fil" href="javascript:displayOnly('all')"><i class="fa fa-filter" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="col cola">#<br><span id="mainjob_dom"></span></div>
+                            <div class="col colb"><text id="dom_fil"></text></div>
+                            <div class="col colc">
+                                <a id="fil_dom" class="fil" href="javascript:displayOnly('dom')"><i class="fa fa-filter" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="col cola">#<br><span id="mainjob_func"></span></div>
+                            <div class="col colb"><text id="func_fil"></text></div>
+                            <div class="col colc">
+                                <a id="fil_func" class="fil" href="javascript:displayOnly('func')"><i class="fa fa-filter" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="joblists">
+                <div class="padding" id="dvToptitles">
+                    <!-- <div class="sectiontitle">Related Job Titles</div> -->                    
+                </div>
+            </div><!-- Job List -->
+        </div><!-- Col a --><div class="col colb chart">
+            <p>Search result for</p>
+            <h1> Category - Job Title </h1>
+            <!-- <img src="images/graph.jpg" style="width: 100%;"> -->
+            <div class="center-align" id="svgcontainer" style="width:100%; height: 100%;">
+            <!-- Draw network SVG elements here-->
+                <div id="tooltipdiv" class="popupctn" style="max-width: 30%;">
+                    <div class="popuptop">
+                        <a id="close" title="Hide details" href=""><i class="material-icons">close</i></a>
+                        <div class="padding">
+                            <div class="col cola">
+                                <div class="score2"><span id="rel_t_weight"></span></div>
+                            </div><div class="col colb"><h1><span id="rel_t_name"></span></h1></div>
+                        </div>
+                    </div>
+                    <div class="popupmid">
+                        <div class="padding">
+                            <div class="col cola">
+                                Category
+                            </div><div class="col colb greencolor"><span id="rel_t_dom"></span></div>
+                            <div class="col cola">
+                                Role
+                            </div><div class="col colb bluecolor"><span id="rel_t_func"></span></div>
+                        </div>
+                    </div>
+                    <a id="rel_t_explore" href=""><div class="popupbtm">
+                        Explore
+                    </div></a>
+                </div>
+            </div>
+            
+          </div><!-- Col b / Map -->
+        </div>
+        <!-- Bottom Container -->
+</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static',filename='d3.layout.cloud.js') }}"></script>
+<script type="text/javascript">
+
+// var width = 800,
+//     height = 800,
+//     radius = 6;
+
+// var force = d3.layout.force()
+//     .charge(-499)
+//     // .linkDistance(30)
+//     .friction(0.3)
+//     .gravity(0.2)
+//     .size([width, height]);
+
+function drawGraph(graph) {
+    var svg1 = document.getElementById("svgcontainer");
+    var s_width = svg1.clientWidth,
+        s_height = svg1.clientHeight;
+        console.log("size: ", s_width,s_height);
+
+    // var s_width = 800,
+    //   s_height = 600,
+    var s_radius = 7,
+      radius_graph = Math.min(s_width, s_height) / 2 - 10;
+
+    var force = d3.layout.force()
+      .charge(-139)
+      // .linkDistance(30)
+      .size([s_width, s_height]);
+
+    $("#cat_nw").remove();
+
+    graphRec=JSON.parse(JSON.stringify(graph));
+
+    var distanceScale = d3.scale.linear().range([5,550]);
+    var min_similarity = d3.min(graph.links, function(d){ return d.value; });
+    var max_similarity = d3.max(graph.links, function(d){ return d.value; });
+    distanceScale.domain([ (1 - max_similarity), (1 - min_similarity) ]);
+
+    var lineThicknessScale = d3.scale.linear().range([1,2]);
+    lineThicknessScale.domain([ min_similarity, max_similarity ]);
+
+    var lineBlackness = d3.scale.linear()
+      .domain([ min_similarity, max_similarity ])
+      .interpolate(d3.interpolateRgb)
+      .range(["#e2e2e2", "#4c4c4c"]); //green-whitish green
+
+    // Fix root node at svg center
+    // data.nodes[0].fixed = true;
+    // data.nodes[0].x = s_width / 2;
+    // data.nodes[0].y = s_height / 2;
+
+    //Creates the graph data structure out of the json data
+    force.nodes(graph.nodes)
+        .links(graph.links)
+        .linkDistance(function(d) { 
+            return distanceScale(1 - d.value); });
+
+    force.start();
+
+    var svg = d3.select("#svgcontainer").append("svg")  //Initially select('body')
+        .attr("id", "cat_nw")
+        .attr("width", s_width)
+        .attr("height", s_height)
+        .style("display", "block")
+        .style("margin-left", "auto")
+        .style("margin-right", "auto");
+
+
+    var link = svg.selectAll(".link")
+        .data(graph.links)
+        .enter().append("line")
+        .attr("class", "link")
+        .style("stroke-width", function(d) {
+            // return Math.sqrt(1 - d.value);
+            return lineThicknessScale(d.value);
+        })
+        .style("stroke", function(d){
+            return lineBlackness(d.value);
+        });
+
+    var node = svg.selectAll(".node")
+        .data(graph.nodes)
+        .enter().append("circle")
+        .attr("class", "node")
+        .attr("r", function(d){
+            if (d.id == "skill_0"){ return 5 }
+            return s_radius})
+        // .attr("group", function(d) { return d.group })
+        // .attr("nname", function(d) { return d.name })
+        // .attr('id', function(d) { return d.id })
+        .style("fill", function(d, i) {
+            // if (d.group == 1) { return "#d8ff00" } // same function
+            // if (d.group == 2){ return "#1081e3" }  // same domain
+            // if (d.group == 12 | d.group == 3){ return "#39b455" }  // 2-hop
+                if (d.id == "skill_0"){
+                    return "black" }  // target
+                else { return "#5f89ad"}
+                // else { return fill_node(i)}
+        })
+        .call(force.drag);
+
+    var text_shadow = svg.selectAll("text.node_label_shadow")
+        .data(graph.nodes)
+        .enter().append("text")
+        .attr("class", "node_label_shadow")
+        .attr("dx", 11)
+        .attr("dy", ".35em")
+        .attr('id', function(d) { return d.id })
+        .style("fill", "white")
+        .text(function(d){ return d.name });
+
+    var text = svg.selectAll("text.node_label")
+        .data(graph.nodes)
+        .enter().append("text")
+        .attr("class", "node_label")
+        .attr("dx", 10)
+        .attr("dy", ".35em")
+        .attr('id', function(d) { return d.id })
+        .text(function(d){ return d.name });
+
+    
+
+    force.on("tick", function() {
+        link.attr("x1", function(d) {
+                return d.source.x;
+                })
+                .attr("y1", function(d) {
+                    return d.source.y;
+                })
+                .attr("x2", function(d) {
+                    return d.target.x;
+                })
+                .attr("y2", function(d) {
+                    return d.target.y;
+                });
+
+        text_shadow.attr("x", function(d) { return d.x; })
+            .attr("y", function(d) { return d.y; });
+
+        text.attr("x", function(d) { return d.x; })
+            .attr("y", function(d) { return d.y; });
+        
+        node.attr("cx", function(d) {
+                // Bounded within rectangle box
+                return d.x = Math.max(s_radius, Math.min(s_width - s_radius, d.x));
+            })
+            .attr("cy", function(d) {
+                return d.y = Math.max(s_radius, Math.min(s_height - s_radius, d.y));
+            });
+        
+    });
+
+    var diff_maxmin = max_similarity - min_similarity;
+    document.getElementById("thresholdSlider").min = min_similarity - 0.003; 
+    document.getElementById("thresholdSlider").max = max_similarity;
+    var step_num = 20;
+    var stepsize = diff_maxmin / step_num;
+    var slider_step = document.getElementById("thresholdSlider").step = stepsize.toFixed(3);
+    document.getElementById("thresholdSlider").value = min_similarity;
+    $("#sliderval").text(min_similarity);
+    document.getElementById("thresholdSlider").disabled = false;
+    $('#thresholdSlider').css("opacity", "1");
+
+    //adjust slider threshold
+    threshold = function setThreshold(value_th) {
+        $("#sliderval").text(value_th);
+        graph.links.splice(0, graph.links.length);  // Remove graph.links.data()
+        
+        // node_noroot.style("visibility", "hidden");
+        // hide all at first
+        // node_noroot.classed("node-hidden", true).classed("node-visible", false);
+        // text.style("visibility", "hidden");
+        // $('a[class="toptitles"]').css("font-weight", "normal");
+        // clear all dvToptitles
+        $('#dvToptitles').html('');
+        $('#dvToptitles').append('<div class="sectiontitle">Related Job Titles<div id="hover_skill"><div class="fillup"></div></div></div>');
+
+        for (var i = 0; i < graphRec.links.length; i++) {
+            if (graphRec.links[i].value > value_th) {
+                graph.links.push(graphRec.links[i]);
+                
+                // Configure other nodes hidden
+                var cur_link = graphRec.links[i];
+                var cur_id = cur_link.target.id;
+
+                // var all_nodes = svg.selectAll(".node");
+                var selected_node = node.filter(function (d, i) {
+                    return d.id == cur_id;
+                });
+                var all_text = svg.selectAll("text.node_label");
+                var selected_text = all_text.filter(function (d, i) {
+                    return d.id == cur_id;
+                });
+            }
+        }
+
+        restart();
+    }
+    
+    //Restart the visualisation after any node and link changes
+    restart = function restartVis() {
+        link = link.data(graph.links);
+        link.exit().remove();
+        // link.enter().insert("line", ".node").attr("class", "link");
+        link.enter().insert("line", ".node").style("stroke-width", function(d) {
+            // return Math.sqrt(1 - d.value);
+            return lineThicknessScale(d.value);
+        })
+        .style("stroke", function(d){
+            return lineBlackness(d.value);
+        });
+
+        node = node.data(graph.nodes);
+        node.enter().insert("circle", ".cursor").attr("class", "node").attr("r", 5)/* .call(force.drag) */;
+        force.start();
+
+        // Update number of nodes connected to target (# Similar job titles:)
+        $("#nodenum").text(graph.links.length);
+
+    }
+      
+}  // end drawGraph
+
+function updateGraph(){
+    $.get('/data/categoryjob/', function(data) {
+        console.log("data", data);
+        // var rel_Data = JSON.parse(data);
+
+        // Render maintitle content: Dom, Func, Skills; EXCEPTION: Toptitles(href)
+        // renderMainTitleContent(rel_Data);
+        drawGraph(data);
+    });
+
+    //add other .get data from controller here.      
+}
+
+updateGraph();
+
+</script>
+</html>

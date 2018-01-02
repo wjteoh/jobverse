@@ -1,0 +1,8 @@
+Bad cases for current algorithm:
+
+Talent Manager
+Marketing Advisor
+
+
+Good cases
+Driver

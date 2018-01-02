@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>JobVerse | Homepage</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/normalize.css') }}" />
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/homepage.css') }}" />
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/form.css') }}" />
+    <script src="https://use.fontawesome.com/b4d97f0552.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+</head>
+
+<style>
+
+.ui-autocomplete { max-height: 300px; overflow-y: auto; overflow-x: hidden;}  
+
+</style>
+
+<body>
+<div class="maincontainer">
+	<img src="{{ url_for('static',filename='new/images/logomain.png') }}" class="logo" alt="Job Analytics" title="Job Analytics">
+<div class="homecontainer">
+	  <div class="padding">
+			<div class="greencontainer">
+				<div class="box2">
+					<div class="padding">
+						<h1>Job Affinity Analysis</h1>
+						<p>Analyze similar Job Titles and the Skills associated to the Job. Enter a job title to start!</p>
+						
+								<form class="contact_form step2" action="{{ url_for('jobTitleSearchForm') }}" method="post" name="contact_form">
+									<div class="col cola">
+										<input class="ui-autocomplete-input" name="titlename" type="text" id="search" style="vertical-align: top;" placeholder="Job Title" required />
+									</div><div class="col colb">
+										<button id="searchnd" class="submit">Submit </button> </div>
+								</form>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+
+var optArray = {{ ac_list|safe }};
+
+$(function () {
+	var title = document.getElementById("search");
+
+	$("#search").change(function(d){
+		if ($.inArray(capitalize_Words($('#search').val()), optArray) < 0) {
+		    title.setCustomValidity("Invalid Job Title Entered!");
+		  } else {
+		    title.setCustomValidity("");
+		  }
+	});
+
+    $("#search").autocomplete({
+        source: optArray })
+});
+
+//capitalize_Words 
+function capitalize_Words(str){
+	return str.replace(/\b\w+/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
+
+</script>
+</html>

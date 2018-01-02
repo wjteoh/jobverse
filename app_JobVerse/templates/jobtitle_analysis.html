@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+
+	<title>JobVerse</title>
+	<link rel="icon" type="image/jpg" href="{{ url_for('static',filename='new/images/popularity_icon.jpg') }}">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/normalize.css') }}" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/style.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/form.css') }}" >
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/style_edit.css') }}" >
+    <script src="https://use.fontawesome.com/b4d97f0552.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css">
+</head>
+<style type="text/css">
+.jlabel{
+	font-size: 12px;
+}
+</style>
+<body>
+<div class="maincontainer">
+	<div class="loader">
+		<div class="loader_gif"></div>
+        <span style="display:block;margin-top: 28%;">Loading graph of <span style="font-weight: bold;" id="mainjob_title_loader"></span>...</span>
+    </div>
+	<div class="topcontainer header">
+			<div class="padding logo">
+				<!-- <img src="images/logo2.png" alt=""/>  -->
+				<a href="{{ url_for('home') }}"><img src="{{ url_for('static',filename='new/images/logo2.png') }}" alt=""/></a>
+			</div>
+			<div class="search">
+				<div class="padding">
+					<form class="contact_form step2" action="{{ url_for('jobTitleSearchForm') }}" method="post" name="contact_form">
+						<input class="ui-autocomplete-input" name="titlename" type="text" id="search" style="vertical-align: top;" placeholder="Enter Job Title (e.g. Software Engineer)" required />
+						
+							<button id="searchnd" class="submit">Submit </button>
+					</form>
+				</div>
+			</div>
+			<div class="joblistsbar">
+				<div class="padding">
+					<div class="search">
+						<div class="padding">
+						<p>Search result for</p>
+						<h1><div class="mainjob_title_ctn"><span id="mainjob_title"></span></div>
+							<div id="mainjob_poprt" class="score2 one" title="Popularity Rating"></div>
+						</h1>
+						<br>
+						<div class="scoretxt">Jobs similarity score above</div> <div class="score"><span id="sliderval"></span></div>
+						<br><br>
+						<!-- <img src="images/bar.jpg" width="285" height="27" alt=""/> -->
+						<div>
+	                        <input type="range" class="thslider" id="thresholdSlider" step="#" name="points" value="#" min="#" max="#" 
+		                            onchange="threshold(this.value)">
+	                    </div>
+						</div>
+					</div>
+					<div class="dashboard">
+						<div class="all dblink active">
+							<div class="col cola">
+								Number of similar job titles
+							</div><div class="col colb">
+								<text id="nodenum"></text>
+							</div><div class="col colc">
+								<a id="fil_all" class="fil domfunc_filter_active" href="javascript:filterClick('all')"><i class="fa fa-filter" aria-hidden="true"></i></a>
+							</div>
+						</div>
+						<div class="dom dblink">
+							<div class="col cola">
+							    <div class="dashboard_label">Category</div>
+							    <div class="dashboard_text"> <span id="mainjob_dom"></span></div>
+							</div><div class="col colb">
+								<text id="dom_fil"></text>
+							</div><div class="col colc">
+								<a id="fil_dom" class="fil" href="javascript:filterClick('dom')"><i class="fa fa-filter" aria-hidden="true"></i></a>
+							</div>
+						</div>
+						<div class="func dblink">
+							<div class="col cola">
+							    <div class="dashboard_label">Role</div>
+							    <div class="dashboard_text"> <span id="mainjob_func"></span></div>
+							</div><div class="col colb">
+								<text id="func_fil"></text>
+							</div><div class="col colc">
+								<a id="fil_func" class="fil" href="javascript:filterClick('func')"><i class="fa fa-filter" aria-hidden="true"></i></a>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		<!-- Logo -->
+		<a href="https://larc.smu.edu.sg/research/portfolio" target="_blank"><img class="larcsmulogo"  src="{{ url_for('static',filename='new/images/logo.png') }}" alt=""/></a>
+	</div><!-- Top Container -->
+	<div class="bottomcontainer hpbottom">
+		<div class="col cola ">
+	  		<div class="chart">
+				<!-- <br> -->
+				<div class="center-align" id="svgcontainer">
+				<!-- Draw network SVG elements here-->
+					<div class="popupctn">
+						<div class="popuptop">
+							<a id="close" title="Hide details" href=""><i class="material-icons">close</i></a>
+							<div class="padding"><h1><span id="rel_t_name"></span></h1></div>
+							
+						</div>
+						<div class="popupmid">
+							<div class="padding">
+								<div class="col cola">
+									Similarity Score
+								</div><div class="col colb greencolor"><div class="score"><span id="rel_t_weight"></span></div></div>
+								<div class="col cola">
+									Popularity
+								</div><div class="col colb greencolor"><div id="rel_t_poprt" class="score2 four"></div></div>
+								<div class="col cola">
+									Category
+								</div><div class="col colb greencolor"><span id="rel_t_dom"></span></div>
+								<div class="col cola">
+									Roles
+								</div><div class="col colb bluecolor"><span id="rel_t_func"></span></div>
+							</div>
+						</div>
+						<a id="rel_t_explore" href=""><div class="popupbtm">
+							Explore
+						</div></a>
+					</div>
+				</div>
+			  <!-- <img src="images/graph.jpg" style="width: 100%;"> -->
+			  
+			</div>
+			<div class="bottomcontainer2">
+				<div class="padding bottomcontainer2_padding">
+				    <div id="skillsbar2">
+				    	<div id="sctn_label">
+							<!-- <h1>Top Skills</h1> -->
+							<text class="skillsheader">Top Skills</text>
+							<div id="title_in_skillbar_CNTR" style="display: none;">for <div id="title_in_skillbar"></div></div>
+						</div>
+						<div class="skillsctn">
+							<div class="padding skillsctn_padding">
+								<div id="dvSkills">
+								</div>
+							</div>
+							<div id="loader_skill" class="container">updating skills...<div class="loader_skill_gif"></div></div>
+						</div>
+					</div>
+				</div>
+			</div>	
+		</div><div class="col colb greybg" style=" overflow: unset; ">
+	    	<div class="joblistsctn_upper">
+				<div class="padding2 joblistsctn_upper_padding">
+					<div id="joblistsctn" style="position: relative;">
+						<div class="sectiontitle sectiontitle_label">
+								Related Job Titles
+							<div id="skill_in_toptitles_CNTR" style="display: none;">requiring <div id="skill_in_toptitles"></div> skill</div>
+						</div>
+						<div class="scoretitle1 popty">Popularity</div>
+						<div class="scoretitle2 jobt">Job titles</div>
+						<div class="scoretitle2 sort_lbl">Sort by</div>
+						<div class="sort">
+							<div class="" tabindex="0" style=" font-size: 10px; ">
+								<select id="sort_rel_t" class="jobverse_sort" tabindex="-1">
+									<option value="similarity" selected>Similarity</option>
+									<option value="popularity">Popularity</option>
+								</select>
+							</div>
+						</div>
+
+					    <!-- <div class="scoretitle1">Popularity</div><div class="scoretitle2">Job titles</div> -->
+					</div>
+			    </div>
+	  		</div>
+			<div class="joblists">
+				<div class="padding">	
+					<div id="dvToptitles" class="joblist_content"></div>
+	        	</div>
+	        </div>
+        </div>
+    </div>
+		<!-- Bottom Container -->
+</div>
+
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static',filename='d3.layout.cloud.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static',filename='new/js/jobtitle_analysis.js') }}"></script>
+<script type="text/javascript">
+    // For the first time render of page with jobtitle content
+    // |tojson |safe marker for html render as string 
+    var init_jobtitle = {{ job_title|tojson|safe }};  // from '/network/<jobtitle>', return='job_title'
+
+    updateGraph(init_jobtitle);
+
+    // Populate the autocomplete results in Search feature
+    var optArray = {{ ac_list|safe }};
+
+    $(function() {
+        var title = document.getElementById("search");
+        $("#search").change(function(d){
+            if ($.inArray(capitalize_Words($('#search').val()), optArray) < 0) {
+                title.setCustomValidity("Invalid Job Title Entered!");
+              } else {
+                title.setCustomValidity("");
+              }
+        });
+        $("#search").autocomplete({
+                source: optArray });
+    });
+
+    //capitalize_Words 
+    function capitalize_Words(str){
+        return str.replace(/\b\w+/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    }
+</script>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>Job Analytics - Job Title Analysis</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/normalize.css') }}" />
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/homepage.css') }}" />
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/form.css') }}" />
+    <script src="https://use.fontawesome.com/b4d97f0552.js"></script>
+</head>
+
+<body>
+<div class="maincontainer">
+	<img src="{{ url_for('static',filename='new/images/logomain.png') }}" class="logo" alt="Job Analytics" title="Job Analytics">
+<div class="homecontainer">
+	  <div class="padding">
+			<div class="greencontainer">
+				<a href="{{ url_for('skill_analysisbPHTML', rel_type='category') }}">
+				<div class="box">
+					<div class="padding">
+						<h1>Job Category Analysis</h1>
+						<p>Analyse the association of different Job Categories (e.g. Information Technology/ Administration) to Groups of Skills required for the Job Category </p>
+					</div>
+				</div></a><a href="{{ url_for('skill_analysisbPHTML', rel_type='role') }}"><div class="box">
+					<div class="padding">
+						<h1>Job Role Analysis</h1>
+						<p>Analyse the association of Job Roles (e.g. Analyst/ Director) to Groups of Skills required for the Job Role </p>
+					</div>
+				</div></a><a href="{{ url_for('skill_analysisbPHTML', rel_type='skill_group') }}"><div class="box">
+					<div class="padding">
+						<h1>Skill Group Analysis</h1>
+						<p>Analyse and visualising relationships between Groups of SKills.<br/>Also shows how different Skills are related to each other</p>
+					</div>
+				</div></a><a href="{{ url_for('jobTitleSearch') }}"><div class="box">
+					<div class="padding">
+						<h1>Job Affinity Analysis</h1>
+						<p>Analyze similar Job Titles and the Skills associated to the Job </p>
+					</div>
+				</div></a>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Job Analytics</title>
+</head>
+
+<!--<link rel="stylesheet" href="jquery-ui.css" />-->
+
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Roboto'>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css">
+
+<style>
+
+
+.text-active{
+    stroke: black;
+    stroke-width: 1.5px;
+}
+
+.a-active{
+    font-weight: bold;
+}
+
+</style>
+<body>
+<!-- SIDE NAV -->
+<!-- <div class="col-sm-2 sidenav hidden-xs">
+                <div class="w3-row">
+                    <div class="navbar-header">
+                          <a class="navbar-brand white-font" href="#">Job Analytics</a>
+                    </div>
+                </div>
+                <br>
+                <h2 style="text-align: center;">Relational Graph</h2>
+                <hr> -->
+                <!-- <h3>Job Category - Topic</h3> -->
+                <!-- <ul class="nav nav-pills nav-stacked"> -->
+                <!-- <li class="active"><a href="#section1">Utilities Here</a></li> -->
+                <!-- <li><a href="#section2">asdsad</a></li> -->
+                    <!-- <label>BiPartite Graph</label>
+                    <li class="con_t">
+                        <a class="t category" href="javascript:initGraph('category')" style="color: white;"> Job Category - Skill Group</a>
+                    </li>
+                    <li class="con_t" style="margin-top: 0px;">
+                        <a class="t role" href="javascript:initGraph('role')" style="color: white;"> Job Role - Skill Group</a>
+                    </li> --> <!-- href calls function to update svg-->
+                    <!-- <label>Chord Diagram</label>
+                    <li class="con_t" style="margin-top: 0px;">
+                        <a class="t skill_group" href="javascript:initGraph('skill_group')" style="color: white;"> Skill Group- Skill Group</a>
+                    </li> --> <!-- href calls function to update svg-->
+                <!-- </ul>
+                <br>
+            </div> -->
+            <!-- <br> -->
+
+
+<!-- LANDING SEARCH NAV -->
+<!-- Sidebar -->
+<!-- <nav class="w3-sidebar w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-left"
+     style="z-index:3;width:370px;margin-top:30px;margin-left:10px;" id="mySidebar">
+    <h3>Search for a job title..</h3>
+    <div class="ui-widget"> -->
+        <!--<input id="search">-->
+        <!--<button type="button" id="searchnd">Search</button>-->
+   <!--      <form action="{{ url_for('handleForm') }}" method="post">
+            <input type="text" name="titlename" id="search"/>
+            <input type="submit" value="Search"/>
+        </form>
+    </div>
+</nav> -->
+
+<!-- Overlay effect when opening sidebar on small screens -->
+<!-- <div class="w3-overlay w3-hide-large" onclick="w3_close()" style="cursor:pointer" title="close side menu"
+     id="myOverlay"></div> -->
+
+
+<!-- FD_NETWORK Simtitle Navigation Bar -->
+    <!-- <nav class="navbar navbar-static-top w3-bar-block w3-collapse w3-large w3-theme-l5 w3-animate-right"
+         style="z-index:3;width:26%; float: right;" id="simTitleNav">
+         <br>
+         <div id="navbar">
+            <div style="overflow: hidden;">
+                <br>
+                <button style="float: right;" onclick="showTopView()">Back</button>
+            </div>
+            <hr>
+            <h3><i>Related Job title </i></h3>
+            <h2><span id="simTitle_name"></span></h2>
+
+            <table style="margin-left:auto; margin-right:auto;">
+                <tr> <td style="font-size: 11pt;">Domain: <span id="simTitle_dom" style="font-size: 11pt;font-weight:bold;"></span> </td>
+                <td style="width:42px"> </td>
+                    <td style="font-size: 11pt;margin-left: 30px;">Function: <span id="simTitle_func" style="font-size: 11pt;font-weight:bold;"></span> </td> </tr>
+            </table>
+            <hr>
+
+            <h3><i>Skills</i></h3> -->
+            <!-- <div class="w3-container"> -->
+                <!-- <div id="simTitle_skills" style=""></div> -->
+            <!-- </div> -->
+
+        <!-- </div>
+    </nav> -->
+
+     <!--Filter containers-->
+        <!-- <div id="sidebar" style="display: none;">
+            <div class="item-group">
+                <label class="item-label">Filter by same..</label>
+                <div id="filterContainer" class="filterContainer checkbox-interaction-group"></div>
+            </div>
+        </div> -->
+
+    <!-- SVG CIRCLE -->
+    <!-- <svg width="16" height="16">
+            <circle cx="10" cy="10" r="6" stroke="white" stroke-width="0" fill="#1081e3" /></svg>  -->
+
+
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static',filename='d3.layout.cloud.js') }}"></script>
+<script type="text/javascript">
+
+///////////////////////////////////////////////////////////////// a_elm = $('#dvToptitles > tr > td > a')
+var zoom = d3.behavior.zoom()
+//       .scaleExtent([1, 5])
+//       .on("zoom", zoomed);
+
+var force = d3.layout.force()
+    .charge(-499)
+    // .linkDistance(30)
+    .friction(0.3)
+    .gravity(0.2)
+    .size([width, height]);
+
+var svg = d3.select("#rel_graph").append("svg")  //Initially select('body')
+    .attr("id", "graph-svg")
+    .attr("width", width)
+    .attr("height", height);
+    // .call(zoom);
+
+var node = svg.selectAll(".node")
+    .on('click', function(d){
+        // clicks++;  //count clicks
+
+        var this_node = d3.select(this);
+        // if(clicks === 1) {
+            // timer = setTimeout(function() {
+            //perform single-click action
+            // renderNeighbor_opacity(d);
+            if (toggle == 0) {
+                toggle = 1;
+                stored_nodename = d.name;
+                this_node.classed("ticked", true);
+                //Reduce the opacity of all but the neighbouring nodes
+                node.transition().duration(400).style("opacity", function (o) {
+                    return neighboring(d, o) | neighboring(o, d) ? 1 : 0.2;
+                });
+                $('a[id='+d.id+']').css("color", "black");
+            }
+            else if (toggle == 1 && d.name == stored_nodename){
+                toggle = 0;
+                stored_nodename = "";
+                this_node.classed("ticked", false);
+                node.transition().duration(300).style("opacity", 1);
+                $('a[id='+d.id+']').css("color", "#337ab7");
+            }
+            // updateSimtitle(d.name);
+
+            // clicks = 0;             //after action performed, reset counter
+            // }, DELAY);
+
+        // } else {
+            // clearTimeout(timer);    //prevent single-click action
+            //perform double-click action
+            // updateGraph(d.name);
+            // clicks = 0;             //after action performed, reset counter
+        // }
+    // });
+
+
+// Create an array logging what is connected to what
+var linkedByIndex = {};
+
+for (i = 0; i < graph.nodes.length; i++) {
+    linkedByIndex[i + "," + i] = 1;
+};
+graph.links.forEach(function (d) {
+    linkedByIndex[d.source.index + "," + d.target.index] = 1;
+});
+
+// This function looks up whether a pair are neighbours
+function neighboring(a, b) {
+    return linkedByIndex[a.index + "," + b.index];
+}
+
+function zoomed() {
+  svg.attr("transform", "translate(" + d3.event.translate + ")scale(" + d3.event.scale + ")");
+}
+
+// UN-USED
+// function renderNeighbor_opacity(d){
+//     if (clicked_node == 0) {
+//         clicked_node = 1;
+//         stored_nodename = d.name;
+//         d3.select(this).classed("ticked", true);
+//         //Reduce the opacity of all but the neighbouring nodes
+//         node.transition().duration(400).style("opacity", function (o) {
+//             return neighboring(d, o) | neighboring(o, d) ? 1 : 0.2;
+//         });
+//     }
+//     else if (clicked_node == 1 && d.name == stored_nodename){
+//         clicked_node = 0;
+//         stored_nodename = "";
+//         node.transition().duration(300).style("opacity", 1);
+//     }
+// }
+
+// detailView = function showDetailView(title_name){
+//     var select_nodes = svg.selectAll('.node');
+//     var corespd_node;
+//     select_nodes.select(function(d) {
+//         if (d.name == title_name){ corespd_node = d;}
+//     });
+//     renderNeighbor_opacity(corespd_node);
+//     updateSimtitle(title_name);
+// }
+
+force.on("tick", function() {
+            
+            // link.attr("x1", function(d) {
+            //     return d.source.x;
+            //     })
+            //     .attr("y1", function(d) {
+            //         return d.source.y;
+            //     })
+            //     .attr("x2", function(d) {
+            //         return d.target.x;
+            //     })
+            //     .attr("y2", function(d) {
+            //         return d.target.y;
+            //     });
+            text.attr("x", function(d) { return d.x; })
+                .attr("y", function(d) { return d.y; });
+            // Bounded within rectangle box
+            node.attr("cx", function(d) {
+                    // return d.x;
+                    return d.x = Math.max(radius, Math.min(width - radius, d.x));
+                })
+                .attr("cy", function(d) {
+                    // return d.y;
+                    return d.y = Math.max(radius, Math.min(height - radius, d.y));
+                });
+            
+        });
+
+
+a_elmt_toptitles = renderMainTopTitles();
+a_elmt_toptitles.hover(
+    // mouseover
+    function(){
+        id = $(this).attr('id');
+        var node = svg.selectAll(".node");
+        var the_rest_nodes = node.filter(function (d, i) {
+            return d.id != id;
+        });
+        // var the_rest_text = text.filter(function (d, i) {
+        //     return d.id != id;
+        // });
+        the_rest_nodes.transition().duration(300).style("opacity", "0.10");
+        // the_rest_text.transition().duration(300).style("opacity", "0.10");
+        var link = svg.selectAll(".link")
+        link.transition().duration(300).style("opacity", "0");
+    },
+    // mouseout
+    function(){
+            // text.transition().duration(200).style("opacity", 1);
+            link.transition().duration(200).style("opacity", 1);
+        }
+    }
+);
+
+
+var node_noroot = node.filter(function (d, i) {
+            return d.group != 0;
+        });
+///////////////////////////////////////////////////////////////// $("text[class=skillcloud]")  /// SVG text
+// https://api.jquery.com/category/selectors/
+// https://api.jquery.com/attribute-equals-selector/
+$( "text[class='skillcloud']" ).next().text( "Hot Fuzz" );  // if <span> is next
+
+skill_selection = drawSkillCloud('#dvSkills', skill_data)
+skill_selection.hover(
+    // mouseover
+    function(){
+        if (ticked != 1){
+            name = $(this).attr('name');
+            // console.log("fill", $(this).css("fill"));
+            var containing_nodes = node_noroot.filter(function (o, i) {
+                return $.inArray(name, o.skills) >= 0;
+            });
+            // containing_nodes.transition().duration(300).style("opacity", "0.10");
+            containing_nodes.classed("node-active", true);
+            containing_nodes.transition().duration(200).style("fill", $(this).css("fill"));
+        }
+        ////NEW
+        if (clicked_scloud != 1  && clicked_node != 1){
+            name = $(this).attr('name');
+            $('.score2_skill[name=\''+name+'\']').addClass("skillcloud_hl");
+
+            var cur_skillcount_selnode = []; //store all skill count for nodes containing hovered skill
+            var cur_id_selnode = [];
+
+            // update label
+            $("#sectiontitle_label_tt").css("height", "12%");
+            $("#dvToptitles_container").css("height", "88%");
+            // update toptile_list label, add..
+            $('#skill_in_toptitles_CNTR').css("opacity", 0).css("display", "block").animate({ opacity: 1 }, "fast" );
+            $("#skill_in_toptitles").html('');
+            $("#skill_in_toptitles").append($('.score2_skill[name=\''+name+'\']').clone().css("vertical-align", "middle"));
+            // update toptitle list
+            $('#dvToptitles').css("opacity", 0 ).html('');
+            $(".toptitle_skill").css("color", "black");
+
+            var rel_count = 0;
+            // containing_nodes = node_noroot.filter(function (o, i) {
+            containing_nodes = d3.selectAll('.node-visible').filter(function (o, i) {  //include center target node
+                //store skills for each node
+                var node_skillkeys = [];
+                o.skills.forEach(function(d){
+                    node_skillkeys.push(d.skill_name);
+                });
+                if ($.inArray(name, node_skillkeys) >= 0){
+                    for (i=0; i<o.skills.length; i++){
+                        if (o.skills[i].skill_name == name){
+                            // list of skill counts for hovered skill_text
+                            cur_skillcount_selnode.push(o.skills[i].skill_count); //for determine max/min radius increment
+                            cur_id_selnode.push(o.id);
+                        }
+                    }
+
+                    // modify toptitle list
+                    linkStr = '<a id="' +o.id+ '" class="toptitles" href="javascript:detailView(\'' +o.name + '\')">';
+                    if (o.group != 0){
+                        linkStr += '<div group="' +o.group+ '" class="scorectn"><div group="' +o.group+ '" class="score2">'+o.similarity+'</div><div class="score2txt">'+o.name +'</div></div>' + '</a>';
+                    }
+                    else{
+                        linkStr += '<div group="' +o.group+ '" class="scorectn"><div group="' +o.group+ '" class="score2">(target)</div><div class="score2txt">'+o.name +'</div></div>' + '</a>';
+                    }
+
+                    $('#dvToptitles').append(linkStr);
+                    rel_count += 1;
+                    return true;
+                }
+                return $.inArray(name, node_skillkeys) >= 0;  //false
+            });
+            $('#dvToptitles').animate({ opacity: 1 }, "fast" );
+
+            containing_nodes.classed("node-active", true);
+            // containing_nodes.style("fill", $(this).css("fill"));  //$(this) == skill text
+            containing_nodes.style("fill", "#d1ec9c");  //$(this) == skill text
+
+            // enable hover
+            a_elmt_toptitles = $('a[class="toptitles"]');
+            enableHover(a_elmt_toptitles);
+        }
+    },
+    // mouseout
+    function(){
+        name = $(this).attr('name');
+
+        // if (name != store){
+        // if (ticked != 1 || name != store){
+        if (ticked != 1){
+            var containing_nodes = node_noroot.filter(function (o, i) {
+                return $.inArray(name, o.skills) >= 0;
+            });
+            containing_nodes.classed("node-active", false);
+            containing_nodes.transition().duration(200).style("fill", "#39b455");
+        }
+    }
+)
+.on('click', function(){
+    name = $(this).attr('name');
+    // condition to turn ON/OFF active ADD HERE
+    if (ticked == 0) {
+        // var ctx = document.getElementById("g-skills");
+        // textElm = document.getElementById(name + "_skillid");
+        // // var parentDiv = textElm.parentNode;
+        // SVGRect = textElm.getBBox();
+        
+        // var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        //     rect.setAttribute("transform", $(this).attr('transform'));
+        //     // rect.setAttribute("x", $(this).x);
+        //     // rect.setAttribute("y", $(this)attr.y);
+        //     rect.setAttribute("width", SVGRect.width);
+        //     rect.setAttribute("height", SVGRect.height);
+        //     rect.setAttribute("fill", "yellow");
+        //     ctx.insertBefore(rect, textElm);
+
+        // $(this).css("stroke", "black").css("stroke-width", "2px");
+        d3.select(this).classed("text-active", true);
+        ticked = 1;
+        store = name;
+        console.log("store", store);
+        // console.log("fill", $(this).css("fill"));
+        var containing_nodes = node_noroot.filter(function (o, i) {
+            return $.inArray(name, o.skills) >= 0
+        //     return d.id != id;
+        });
+        // containing_nodes.transition().duration(300).style("opacity", "0.10");
+        containing_nodes.classed("node-active", true);
+        containing_nodes.transition().duration(200).style("fill", $(this).css("fill"));
+    }
+                        
+});
+//mouseover
+function(){
+    // Scaling for radius of node containing skill hovered
+    var radiusScale = d3.scale.linear().range([8,16]);
+    var min_skillcount_selnodes = d3.min(cur_skillcount_selnode);
+    var max_skillcount_selnodes = d3.max(cur_skillcount_selnode);
+    radiusScale.domain([ min_skillcount_selnodes, max_skillcount_selnodes ]);
+
+    // modify radius attr for selected containing_nodes based on skill count on node
+    // containing_nodes.transition().duration(800).attr('r', function(d){
+    //     for (i=0; i<d.skills.length; i++){  // loop through skills of node to find the name:count pair
+    //         if (d.skills[i].skill_name == name){
+    //             console.log(":containing node", d.name);
+    //             console.log("skillcount", d.skills[i].skill_count);
+    //             console.log("radius size", radiusScale(d.skills[i].skill_count));
+    //             return radiusScale(d.skills[i].skill_count);
+    //         }
+    //     };
+    // });
+
+    // containing_text = d3.selectAll(".node_skill_count")
+    //     .filter(function(d){ return $.inArray(d.id, cur_id_selnode) >= 0 });
+      
+    //   containing_text.style("visibility", "visible")
+    //   // .text(function(d) {
+    //   //   if (d.index < 25 && d.index > 0){
+    //   //       return d.distance.toString();
+    //   //   }});
+    //   .text(function(d) {
+    //     for (i=0; i<d.skills.length; i++){
+    //         if (d.skills[i].skill_name == name){
+    //             console.log(":containing node", d.name);
+    //             console.log("skillcount", d.skills[i].skill_count);
+    //             console.log("radius size", radiusScale(d.skills[i].skill_count));
+    //             return d.skills[i].skill_count;
+    //         }
+    //     };
+    //   });
+
+    // var selectedBar = d3.select(this);
+    // console.log("selectedBar", selectedBar);
+    // selectedBar.select(".label").style('font-weight',900);
+}
+// mouseout
+function(){
+    name = $(this).attr('name');
+
+    mouseoutSkill(name);
+
+    // if (clicked_scloud != 1 && clicked_node != 1){
+    //     // var containing_nodes = node_noroot.filter(function (o, i) {
+    //     //     return $.inArray(name, o.skills) >= 0;
+    //     // });
+    //     $('#dvToptitles').html('');
+        
+    //     containing_nodes.classed("node-active", false);
+    //     containing_nodes.style("fill", function(d){
+    //         if (d.group == 0) { return "black" }
+    //         return "#39b455";
+    //     });
+    //     // containing_nodes.transition().duration(200).attr('r', function(d){
+    //     //     if (d.group == 0) { return 5 }
+    //     //     return radius;
+    //     // });
+
+    //     // recover toptitle list according to .node.node-visible
+    //     d3.selectAll(".node-visible").filter(function(o){
+    //         if (o.group != 0){  // exclude target center node
+    //             linkStr = '<a id="' +o.id+ '" class="toptitles" href="javascript:detailView(\'' +o.name + '\')">';
+    //             linkStr += o.name + ' (' + o.similarity + ') ' + '</a><br>';
+    //             $('#dvToptitles').append(linkStr);
+    //         }
+    //         return true; //doesnt matter
+    //     });
+
+    //     // recover toptile_list label
+    //     $("#hover_skill").html('');
+    //     // enable hover
+    //     a_elmt_toptitles = $('a[class="toptitles"]');
+    //     enableHover(a_elmt_toptitles);
+
+    //     // containing_text.style("visibility", "hidden")
+        
+    // }
+}
+
+///////////////////////////////////////////////////////////////// SKILLS BAR CHART aggregated + related
+///////////////////////////////////////////////////////////////// up and down
+returnelm = drawSKillsBar('dvSkills', skill_data, [y, yAxis, gy, text_class, bars, bar_class]);
+            y = returnelm[0], yAxis= returnelm[1], gy=returnelm[2], bars= returnelm[3];
+             console.log(y);
+             console.log(yAxis);
+             console.log(gy);
+             console.log(bars);
+            skill_selection = returnelm[4];
+
+///////////////////////////////////////////////////////////////// SET style of element
+$(this).css("fill"); // jquery http://api.jquery.com/css/
+containing_nodes.classed("node-active", true); // d3.select
+containing_nodes.transition().duration(200).style("fill", $(this).css("fill"));  // d3.select + jquery
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// not used, for update simtitle content bar
+function updateSimtitle(simtitle_name){
+    if (toggle == 0 && stored_nodename == "") {
+        console.log("Enter IF1");
+        toggle = 1;
+        stored_nodename = simtitle_name;
+
+        $.get(DATA_URL + 'get_sim_content/' + simtitle_name, function(simtitle_skill_data_json){
+            var simtitle_skill_data = JSON.parse(simtitle_skill_data_json);
+            // draw related title content; format: json: "dom", "func", "skills"
+            renderSimTitleContent(simtitle_skill_data);
+        })
+
+        d3.csv(DATA_URL + 'get_skill/' + simtitle_name, function(skill_data) {
+            drawSkillCloud('#simTitle_skills', skill_data)
+        });
+
+        $('#topNav').hide();
+        $('#simTitleNav').show();
+    }
+    else if (toggle == 1 && stored_nodename == simtitle_name) {
+        console.log("Enter IF2");
+        toggle = 0;
+        stored_nodename = "";
+        //Put them back to opacity=1
+        node.transition().duration(300).style("opacity", 1);
+        // text.transition().duration(200).style("opacity", 1);
+        link.transition().duration(300).style("opacity", 1);
+        $('#topNav').show();
+        $('#simTitleNav').hide();
+    }
+    else if (toggle == 1 && stored_nodename != simtitle_name) { 
+        console.log("Enter IF3");
+        stored_nodename = simtitle_name;
+        $.get(DATA_URL + 'get_sim_content/' + simtitle_name, function(simtitle_skill_data_json){
+            var simtitle_skill_data = JSON.parse(simtitle_skill_data_json);
+            // draw related title content; format: json: "dom", "func", "skills"
+            renderSimTitleContent(simtitle_skill_data);
+        })
+
+        d3.csv(DATA_URL + 'data/get_skill/' + simtitle_name, function(skill_data) {
+            drawSkillCloud('#simTitle_skills', skill_data)
+        });
+    }
+}
+
+
+$('#topNav').show();
+$('#simTitleNav').hide();        
+
+function renderSimTitleContent(data){
+    $("#simTitle_name").text(data.name);
+    $("#simTitle_dom").text(data.domain);
+    $("#simTitle_func").text(data.function);
+}
+
+
+    // Main job title panel content
+    // function renderMainTitleContent(main_title_name, main_data, skill_data){
+    function renderMainTitleContent(main_data){
+            $("#mainjob_title").text(main_data.name);
+            $("#mainjob_dom").text(main_data.domain);
+            $("#mainjob_func").text(main_data.function);
+            $("#mainjob_dom_filter").text(main_data.domain);
+            $("#mainjob_func_filter").text(main_data.function);
+            // $("#status_msg_txt").text(main_title_name);
+
+            //add skills from main_data.skills(Arr)
+
+            // main_data_skills = main_data.skills.sort();
+
+            // for (i = 0; i < main_data.skills.length; i++){
+            //     linkStr = '<tr><td>' + main_data_skills[i] + '</td></tr>';
+            //     $("#dvSkills").append(linkStr);
+            // }
+    }
+
+    // For main job title graph
+    function updateGraph(jobtitle){
+        $.get('/data/network/' + jobtitle, {}, function(data) {
+            $("#status_msg_txt").text(jobtitle);
+
+            var jobJsData = JSON.parse(data);
+
+            // Render maintitle content: Dom, Func, Skills; EXCEPTION: Toptitles(href)
+            renderMainTitleContent(jobJsData);
+            drawGraph(jobtitle, jobJsData);
+        });
+
+        //add other .get data from controller here.      
+    }
+
+    // For the first time render of page with jobtitle content
+    // |tojson |safe marker for html render as string 
+    var init_jobtitle = {{ job_title|tojson|safe }};  // from '/network/<jobtitle>', return='job_title'
+
+    updateGraph(init_jobtitle);
+
+    // Populate the autocomplete results in Search feature
+    var optArray = {{ ac_list|safe }};
+
+    $(function() {
+        $("#search").autocomplete({
+                source: optArray })
+            .keypress(function (e) {
+                var code = e.keyCode || e.which;
+                if (code === 13) {
+                    //enter has been pressed
+                    updateGraph($('#search').val());
+            };
+        });
+
+        $("#searchnd").click(function(){
+            updateGraph($('#search').val());
+        });
+    });
+
+//******************************************//
+//                                          //
+//               CHORD DIAGRAM              //
+//                                          //
+//******************************************//
+
+$.get('/data/network/relation/bP/' + rel_type, function(data) {  // use new function from views.py : def getBipartiteDataNew:
+        var weightScale = d3.scale.linear().range([1,100]);
+        var min_weight = d3.min(data, function(d){ return d[2]; }), 
+            max_weight = d3.max(data, function(d){ return d[2]; });
+        console.log("min_weight", min_weight);
+        console.log("max_weight", max_weight);
+        weightScale.domain([ min_weight, max_weight ]);
+
+        scaled_data = []
+        data.forEach(function(d){
+            scaled_data.push([d[0], d[1], weightScale(d[2])])
+        });
+
+        // console.log("scaled_data", scaled_data);
+        var nmin_weight = d3.min(scaled_data, function(d){ return d[2]; }), 
+            nmax_weight = d3.max(scaled_data, function(d){ return d[2]; });
+        console.log("new_min_weight", nmin_weight);
+        console.log("new_max_weight", nmax_weight);
+        
+        // drawBpGraph(scaled_data, converttoDisplay(rel_type));
+        drawBpGraph(data, converttoDisplay(rel_type), false);
+    });
+
+//text .attr("type", function(d){ return d.type})
+        // .attr("x", "")
+        // .attr("y", "")
+        // // .attr("dy", "-1.05em")
+        // .style("text-anchor", null)
+        // .attr("text-anchor", function(d) {
+        //     elm_angle = (d.startAngle + d.endAngle) / 2;
+        //     return elm_angle > (Math.PI/2) ? "end" : null; 
+        // })
+        // .attr("transform", function(d){
+        //     elm_x = $(this).attr("x");
+        //     elm_y = $(this).attr("y");
+        //     elm_angle = (d.startAngle + d.endAngle) / 2;
+        //     if (d.type=="g") console.log("label: PI", d.source, elm_angle + "(" + d.startAngle+ "+" + d.endAngle+")", Math.PI);
+        //     return "rotate(" + (elm_angle * 180 / Math.PI) + ")"
+        //         + "translate(270)"
+        //         + (elm_angle > (Math.PI/2) ? "rotate(180)" : "");
+        // });
+
+    // function mouseover(d){
+    //     if (clicked !== 1){
+    //         // text.style("visibility", "hidden");
+    //         console.log("Enter chord mouseover");
+    //         // function function1(param,callback){
+    //         //     text.style("visibility", "hidden");
+    //         //     ch.mouseover(d);
+    //         //     callback();
+    //         // }
+    //         // function1(d, function() {
+    //         //   text.style("visibility", "visible")
+    //         //     .attr("x", "")
+    //         //     .attr("y", "")
+    //         //     .attr("transform", function(d){
+    //         //         $(this).attr("x") = 0;
+    //         //         $(this).attr("y") = 0;
+    //         //         elm_x = $(this).attr("x") = 0;
+    //         //         elm_y = $(this).attr("y") = 0;
+    //         //         elm_angle = (d.startAngle + d.endAngle) / 2;
+    //         //         if (d.type=="g") console.log("label: PI", d.source, elm_angle + "(" + d.startAngle+ "+" + d.endAngle+")", Math.PI);
+    //         //         return "rotate(" + (elm_angle * 180 / Math.PI) + ")"
+    //         //             + "translate(270)"
+    //         //             + (elm_angle > (Math.PI/2) ? "rotate(180)" : "");
+    //         //     });
+    //         // });
+    //         ch.mouseover(d);
+
+    //         alltext.style("visibility", function(t){
+    //             // console.log("text d:", t);
+    //             if(t.percent <= weights_th && t.source != d.source){
+    //                 return "hidden";
+    //             }
+    //         });
+    //             // .text(function(d){ if(d.type!='gs')console.log(d.percent);return d.source+" ("+d3.format('.3n')(d.percent)+"%)"});
+
+    //         var selectedBar = d3.select(this);
+    //         console.log("hoveredBar", selectedBar);
+    //         selectedBar.select(".label").style('font-weight','bold')
+    //             .style('font-size','11px');
+    //         // selectedBar.select(".perc").style('font-weight','bold');  
+    //     }
+
+//******************************************//
+//                                          //
+//              SKILLS BAR CHART            //
+//                                          //
+//******************************************//
+//used to draw 2 graphs in different div container
+var y, yAxis, gy, text_class='skillcloud', bars, bar_class='bar',
+    y_rel, yAxis_rel, gy_rel, text_class_rel='skillcloud_rel', bars_rel, bar_class_rel='bar_rel';
+var margin = {
+        top: 15,
+        right: 25,
+        bottom: 15,
+        left: 150
+    };
+function drawSKillsBar(container, data, settings){
+    var svg_container = container + "_svg";
+    // clear all previous skillsbar svg 
+    $("#"+svg_container).remove();
+    //set up svg using margin conventions - we'll need plenty of room on the left for labels
+
+    // var width = 960 - margin.left - margin.right,
+    //     height = 500 - margin.top - margin.bottom;
+
+    var svg = d3.select("#"+container).append("svg")
+        .attr("id", svg_container)
+        // .attr("class", "skills_80")
+        // .attr("width", width + margin.left + margin.right)
+        // .attr("height", height + margin.top + margin.bottom)
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+    var svg_tmp = document.getElementById(svg_container);
+    var width = svg_tmp.clientWidth - margin.left - margin.right,
+        height = svg_tmp.clientHeight - margin.top - margin.bottom;
+
+    console.log(svg_container, svg_tmp.clientWidth, width, svg_tmp.clientHeight, height);
+
+    var x = d3.scale.linear()
+        .range([0, width])
+        .domain([0, d3.max(data, function (d) {
+            return d.value;
+        })]);
+
+    // y = d3.scale.ordinal()
+    settings[0] = d3.scale.ordinal()
+        .rangeRoundBands([height, 0], .1)
+        .domain(data.map(function (d) {
+            return d.name;
+        }));
+
+    //make y axis to show bar names
+    // yAxis = d3.svg.axis()
+    settings[1] = d3.svg.axis()
+        .scale(settings[0])
+        //no tick marks
+        .tickSize(0)
+        .orient("left");
+
+    // gy = svg.append("g")
+    settings[2] = svg.append("g")
+        .attr("class", "y axis")
+        .call(settings[1])
+
+    svg.selectAll(".tick").select("text")
+        // .attr("class", "skillcloud")
+        .attr("class", settings[3])
+        .attr("name", function(s){
+            // var a = $(this).text();
+            // console.log("a", a);
+            return $(this).text();
+        })
+        .style("cursor", "pointer");
+
+    // bars = svg.selectAll(".bar")
+    settings[4] = svg.selectAll("."+settings[5])
+        .data(data)
+        .enter()
+        .append("g")
+
+    // //append rects
+    // bars.append("rect")
+    settings[4].append("rect")
+        // .attr("class", "bar")
+        .attr("class", settings[5])
+        .attr("y", function (d) {
+            return settings[0](d.name);
+        })
+        .attr("height", settings[0].rangeBand())
+        .attr("x", 0)
+        .attr("width", function (d) {
+            return x(d.value);
+        });
+
+    //add a value label to the right of each bar
+    // bars.append("text")
+    //     .attr("class", "label_sc")
+    //     //y position of the label is halfway down the bar
+    //     .attr("y", function (d) {
+    //         return y(d.name) + y.rangeBand() / 2 + 4;
+    //     })
+    //     //x position is 3 pixels to the right of the bar
+    //     .attr("x", function (d) {
+    //         return x(d.value) + 3;
+    //     })
+    //     .text(function (d) {
+    //         return d.value;
+    //     });
+    console.log("skillcloud loaded");
+    $(".loader").fadeOut("fast");  
+    var textsc = $("text.skillcloud");
+    // return $("text.skillcloud");
+    return [settings[0], settings[1], settings[2], settings[4], textsc];
+}
+// returnelm = drawSKillsBar('dvSkills', skill_data, [y, yAxis, gy, text_class, bars, bar_class]);
+            // y = returnelm[0], yAxis= returnelm[1], gy=returnelm[2], bars= returnelm[3];
+            //  console.log(y);
+            //  console.log(yAxis);
+            //  console.log(gy);
+            //  console.log(bars);
+            // skill_selection = returnelm[4];
+
+//******************************************//
+//                                          //
+//                SKILLS CLOUD              //
+//                                          //
+//******************************************//
+// Draw skill cloud to screen
+    var layout;
+    var svgskills;
+    var fill = d3.scale.category20c();
+    var fill_clicked = d3.scale.linear()
+      .domain([0,89])
+      .interpolate(d3.interpolateRgb)
+      .range(["#353535", "#e2e2e2"]); //dark grey-whitish
+
+    function renderSkillCloud(svg_container){
+        svgskills.append("g")
+              .attr("id", "g-skills")
+              .attr("transform", "translate(" + (layout.size()[0] / 2 - 10) + "," + layout.size()[1] / 2 + ")")
+            .selectAll("text")
+              .data(layout.words())
+            .enter().append("text")
+              .attr("id", function(d){ return d.text + "_skillid"; })
+              .attr("class", "skillcloud")
+              .attr("name", function(d){ return d.text; })
+              .attr("text-anchor", "middle")
+              // .attr("title", function(d){ return d.text; })
+              .style("cursor", "pointer")
+              .style("font-size", function(d) { return d.size + "px"; })
+              .style("font-family", "Impact")
+              .style("fill", function(d, i) { return fill(i); })
+              .transition().duration(200).attr("transform", function(d) {
+                return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
+                // return "translate(" + [d.x, d.y] + ")rotate(0)";
+              })
+              .text(function(d) { return d.text });
+
+        setTimeout(function(){
+            d3.selectAll("text.skillcloud").append("title").text(function(d){ return d.text });
+        }, 50);
+
+        console.log("skillcloud loaded");
+        $(".loader").fadeOut("fast");           
+    }
+
+    // Draw skill cloud for specified div container
+    function drawSkillCloud(container, skill_data){
+        $(container).empty();
+        var svg_container = container + "_svg";
+
+        svgskills = d3.select(container).append("svg")
+              .attr("width",  "100%")
+              .attr("height", "100%")
+              .attr("id", svg_container)
+              .attr("viewBox", "0 0 400 800")
+              .style("display", "block")
+              .style("margin", "auto");
+
+        //get svg container specific width & height 
+        var svg1 = document.getElementById(svg_container);
+        var s_width = svg1.clientWidth,
+            s_height = svg1.clientHeight;
+        console.log("skill_width&height", s_width , s_height);
+        svgskills.attr("viewBox", "0 0 " + s_width + " " + s_height);
+        // 
+        var topskillsScale = d3.scale.linear().range([8,38]);
+
+        var topskills = skill_data
+            .filter(function(d) { return +d.count > 0; })
+            .map(function(d) { return {text: d.skill_name, text_size: +d.count }; })
+            .sort(function(a,b) { return d3.descending(a.text_size,b.text_size); });
+            // .slice(0,50);  //Limit to 100 results
+
+        var min_skillcount = d3.min(topskills, function(d){ return d.text_size; }), 
+            max_skillcount = d3.max(topskills, function(d){ return d.text_size; });
+        // set the data max/min to domain desired range above
+        // topskillsScale.domain([ min_skillcount,
+        topskillsScale.domain([
+            0,
+            max_skillcount ]);
+
+        layout = d3.layout.cloud()
+            .size([s_width, s_height])
+            .words(topskills)
+            .padding(1)
+            // .rotate(function() { return ~~(Math.random() * 2) * 90; })
+            .rotate(function() { return 0; })
+            .spiral("rectangular")
+            .font("Impact")
+            .fontSize(function(d) {
+                // console.log("before scaling (skill_count):", d.text, d.text_size);
+                // console.log("after scaling (px):",d.text, topskillsScale(d.text_size));
+
+                if(min_skillcount == max_skillcount && max_skillcount == 1){
+                    return d.text_size * 20;
+                }
+                else{
+                    return topskillsScale(d.text_size);
+                }
+            })
+            .on("end", function(){ renderSkillCloud(svg_container) });
+
+        console.log("size", layout.size());
+
+        layout.start();
+        return $("text[class=skillcloud]");
+    }
+
+function truncateTextLabel(target){
+    // if (specified_elm == "all"){
+        d3.selectAll(".groups").select("text.label").filter(function(d){ return d.type=="g" }) // can modify to select .show_text
+            .text(function(t){
+                var first_sgmt = t.source.substring(0,20)
+                if(target.source != t.source){
+                    return first_sgmt +",.. ("+((t.value/target.value)*100).toFixed(2)+"%)"
+                }
+                else{  // for target skill_group
+                    return first_sgmt + ",.. (" + t.value.toFixed(2) + "%)" ;
+                }
+                
+            });
+
+        $("#rel_graph").addClass("ch_pos");
+    // }
+    // truncate specified text element (only ONE skill_group text elm, NOT USED ATM)
+    // else{  
+    //     // d3.select(specified_elm).select(".label")
+    //     specified_elm
+    //         .text(function(t){
+    //             var first_sgmt = t.source.substring(0,20)
+    //                 value = d3.format('.3n')(t.value);
+    //             return first_sgmt + ",.. (" + value + ")" ;
+    //         });
+    // }
+}
+
+</script>
+</html>
+
+<nav class="navbar navbar-default" id="navbar">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand white-font" href="#" style="color: white;">Job Analytics</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="col-sm-4 collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav white-font">
+            <!-- <li class="active" style="color: white;"><a href="#"> <span class="sr-only">(current)</span></a></li> -->
+            <li class="con_t">
+                <!-- <a class="t category" href="javascript:initGraph('category')" style="color: white;"> Job Category - Skill Group</a> -->
+                <a class="t category" href="#" style="color: white;"> Job Category - Skill Group</a>
+            </li>
+            <li class="con_t" style="margin-top: 0px;">
+                <a class="t role" href="#" style="color: white;"> Job Role - Skill Group</a>
+            </li> <!-- href calls function to update svg-->
+            <li class="con_t" style="margin-top: 0px;">
+                <a class="t skill_group" href="#" style="color: white;"> Skill Group- Skill Group</a>
+            </li> <!-- href calls function to update svg-->            
+            <li class="con_t active" style="margin-top: 0px;">
+                <a class="t jobtitle_als" href="#" style="color: white;"> Job Title Analysis</a>
+            </li> <!-- href calls function to update svg-->  
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
+    <!-- for skill title label -->
+    <div id="sectiontitle_label" style="height: 10%;">
+          <div class="sectiontitle" style="font-size: 16px;">
+          <span style="display:inline-block;">Skills</span> <span id="title_in_skillbar_CNTR" style="display: inline-block;opacity: 1;font-size: 16px;">for </span>
+          <span id="title_in_skillbar" style="font-size: 20px; color: #3180bb;display: block;">Senior Information Technology Coordinator</span> 
+          </div>
+      </div>

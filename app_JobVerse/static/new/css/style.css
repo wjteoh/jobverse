@@ -1,0 +1,230 @@
+@charset "utf-8";
+/* CSS Document */
+
+html, body{
+	margin: 0;
+	padding: 0;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 14px;
+	height: 100%;
+	width: 100%;
+	min-width: 1024px;
+}
+
+.bg{ 
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background-size: cover;
+	background-image: url(../images/bg2.jpg);
+	background-position: center;
+}
+
+.greybg {
+	background-color: #f6f6f6;
+}
+
+.greencolor{ color: #18bd88; font-weight: bold;}
+.redcolor{ color: #ff0000; font-weight: bold;}
+.bluecolor{ color: #3180bb; font-weight: bold;}
+.purplecolor{ color: #7561af; font-weight: bold;}
+
+.logo img{ width: 100%; max-width: 227px}
+.larclogo{ position: fixed; bottom: 0; /*left: 20px;*/ width: 318px; height: 80px; background-image: url(../images/logo.png)}
+.clearboth { clear: both}
+
+.maincontainer{
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.topcontainer { 
+	position: relative;
+	background-color: #0e4a8d;
+	height: 100%;
+	width: 25%;
+	float: left;
+}
+
+.navi { position: relative; height: 100%;}
+.navi ul{ margin: 0; padding: 0;}
+.navi ul li {
+    position: relative;
+    display: inline-block;
+    width: 25%;
+    text-align: center;
+	height: 80px;
+    vertical-align: middle;
+}
+.navi ul a{ margin: 0; padding: 0; color: #ffffff;}
+.navi ul li:hover{background-color: #0e6f57}
+.navi ul li:active, .current{background-color: #239e77}
+
+.topcontainer .padding{ 
+	padding: 20px 20px 10px 20px;}
+
+.col{ display: inline-block; vertical-align: top;}
+.col .padding2{ padding: 20px;}
+.header .cola{ width: 30%;}
+.header .colb{ width: 70%; text-align: left;}
+
+.bottomcontainer {
+	position: relative;
+	height: 100%;
+	width: 75%;
+	float: left;
+}
+
+.bottomcontainer2 {
+	width: 100%;
+}
+
+.bottomcontainer2 .padding{
+	padding: 20px;
+}
+
+.bottomcontainer2 h1{ margin: 0; padding: 0;}
+.hpbottom .bg{ 
+	background-image: url(../images/bg.jpg);
+	background-size: cover;
+	background-position: center;}
+.hpbottom .cola{position: relative; width: 70%; height: 100%; overflow: auto;}
+.hpbottom .colb{position: relative; width: 30%; height: 100%; overflow: auto; margin: 0 auto;}
+.hpbottom .colc{position: relative; width: 20%;}
+
+
+.joblistsbar { position: relative; height: auto; background-color: #2f2f2f; color: #FFFFFF}
+.joblists{ position: relative; overflow: auto; height: 90%; }
+
+.joblistsbar .padding{ padding: 20px 0 20px 20px;}
+.joblistsbar h1{font-size: 18px; margin: 0; padding: 0;}
+.joblistsbar .scoretxt{float: left; padding: 5px 0px; width: 60%;}
+.joblistsbar .score{ padding: 5px 10px; float: left; background-color: #18c7f3; font-size: 18px; border-radius: 10px;}
+
+
+.score{ padding: 2px 10px; float: left; background-color: #18c7f3; font-size: 12px; border-radius: 10px; color: #ffffff;}
+
+.joblistsbar h1{ font-size: 24px;}
+.scoretitle1{ width: 55px; display: inline-block; font-size: 10px; font-weight: bold}
+.scoretitle2{ width: 70%; display: inline-block; font-size: 10px; font-weight: bold}
+.score2{ width: 40px; height: 13px; display: inline-block; background-image: url(../images/bar.png); background-size: 100%; background-repeat: no-repeat; vertical-align: top; margin: 5px;}
+.score2.one {background-position: 0 0;}
+.score2.two{ background-position: 0 -14px;}
+.score2.three{ background-position: 0 -27px;}
+.score2.four{ background-position: 0 -40px;}
+.score2.five{ background-position: 0 -54px ;}
+.score2txt{ display: inline-block;font-size: 12px; width:70%; margin-left: 10px;}
+.scorectn {margin-bottom: 2px;}
+.scorectn:hover{background-color: #ccf8ff; border-radius: 10px; cursor: pointer}
+
+.jobs { padding: 0 0 10px 0;}
+.jobs .cola{ width: 50%;}
+.jobs .colb{ width: 50%;}
+
+.jobsctn{ padding: 10px 0;}
+.jobsctn:nth-child(even){ background-color: #fbfbfb; border-bottom: solid 1px #eaeaea; border-top: solid 1px #eaeaea}
+.jobsctn h1{ float: left; margin: 0 0 10px 0; padding: 0;}
+.jobsctn .location{float: right; position: relative; padding: 5px 10px; display: block; background-color: #ffc000; border-radius: 5px;}
+
+.skillsctn { border: dashed 1px #E3E3E3;}
+.skillsctn .padding{padding: 20px;}
+.skills{padding: 3px 12px;
+    display: inline-block;
+    min-width: 40px;
+    font-size: 12px;
+    border-radius: 15px; background-color: #d1ec9c;
+    vertical-align: top;
+    text-align: center;
+    color: black;
+	margin: 2px;
+	font-family: 'Open Sans', sans-serif;
+	cursor: pointer;
+}
+
+
+.skills.fade{ opacity: 0.6;}
+.skills.orange{ background-color: #ff9c00}
+
+.skills:hover{ background-color: #77b64c;}
+.skills.orange:hover{ background-color: #f86900}
+
+.messages .padding, .joblists .padding{ padding: 10px 10px 0 0;}
+.jobs .txt{ display: inline-block; margin-left: 10px; width: 80%; font-family: 'Open Sans', sans-serif; vertical-align: top}
+
+.search .padding{padding: 0 20px 20px 20px;}
+.search .cola{width: 77%; text-align: right; margin-right:2%;}
+.search .colb{width: 20%; text-align: left;}
+
+.search p{ margin: 0; padding: 0;}
+
+.dashboard .col{margin: 5px 0;}
+.dashboard .cola{ width: 70%; margin: 0; padding: 0;}
+.dashboard .colb{ width: 15%; text-align: center; font-size: 30px; margin: 0; padding: 0;}
+.dashboard .colc{ width: 15%; text-align: center; margin-top: 10px;}
+
+.dashboard span{ font-size: 18px; color: #18bd88}
+
+.dashboard .dblink{ padding: 10px 10px 10px 20px;}
+
+.dashboard .dblink:hover, .dashboard .dblink.active{ background-color: #ffffff; border-top-left-radius: 40px; border-bottom-left-radius: 40px; color: #000000; cursor: pointer;}
+
+.chart{ text-align: center; height: 70%; overflow: auto;}
+.chart img{ max-width: 600px; width: 100%;}
+.chart p{ margin: 0; padding: 0;}
+.chart h1{ color: #e6501c; margin: 0 0 30px 0; padding: 0; font-size: 30px;}
+.sectiontitle{ font-size: 24px; font-weight: bold; color: #0f4a8e}
+button{
+	width: 100%;
+	padding: 5px;
+	background-color: #238fe2;
+	background: -webkit-gradient(linear, left top, left bottom, from(#238fe2), to(#1c68b6));
+	background: -webkit-linear-gradient(top, #238fe2, #1c68b6);
+	background: -moz-linear-gradient(top, #238fe2, #1c68b6);
+	background: -ms-linear-gradient(top, #238fe2, #1c68b6);
+	background: -o-linear-gradient(top, #238fe2, #1c68b6);
+	background: linear-gradient(top, #238fe2, #1c68b6);
+	border: 1px solid #2391e5;
+	border-bottom: 1px solid #2391e5;
+	border-radius: 3px;
+	-webkit-border-radius: 3px;
+	-moz-border-radius: 3px;
+	-ms-border-radius: 3px;
+	-o-border-radius: 3px;
+	box-shadow: inset 0 1px 0 0 #2696f5;
+	-webkit-box-shadow: 0 1px 0 0 #2696f5 inset ;
+	-moz-box-shadow: 0 1px 0 0 #2696f5 inset;
+	-ms-box-shadow: 0 1px 0 0 #2696f5 inset;
+	-o-box-shadow: 0 1px 0 0 #2696f5 inset;
+	color: white;
+	font-weight: normal;
+	text-align: center;
+	font-size:14px;
+	text-shadow: 0 -1px 0 #396715;
+}
+
+button:hover {
+	opacity:.85;
+}
+
+.jobsub { float: right; color: #238fe2}
+.jobsub span{ font-size: 20px; font-weight: bold;}
+.joblistsbar a{text-decoration: none; color: #e8501e;}
+.joblistsbar a:hover{ color: #9B9B9B}
+
+
+.legendctn h1{ font-size: 12px;}
+.legendbox { border-radius: 10px; border: solid 1px #18bd88}
+.legendbox .padding{ padding: 20px;}
+
+.popupctn{ width: 30%; border-radius: 5px; box-shadow: 1px 1px 5px #000000; }
+.popuptop .cola, .popupmid .cola{ width: 30%; text-align: left; font-size: 12px;}
+.popuptop .colb, .popupmid .colb{ width: 70%; text-align: left}
+.popuptop{ background-color: #f6f6f6; border-top-left-radius: 5px; border-top-right-radius: 5px}
+.popuptop .padding{ padding: 10px;}
+.popupmid .padding{ padding: 10px;}
+.popupbtm {background-color: #3180bb; padding: 5px 0; color: #ffffff; text-align: center}
+.popupbtm:hover { background-color: #0c86cc;}
+.popuptop h1{color: #3180bb; margin: 0; padding: 0; font-size: 20px;}
+.popupctn a{text-decoration: none;}
+

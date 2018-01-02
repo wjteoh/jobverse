@@ -1,0 +1,143 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>Job Analytics - Job Title Analysis</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css_bkp/normalize.css') }}" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css_bkp/style.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css_bkp/form.css') }}" >
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css_bkp/style_edit.css') }}" >
+    <script src="https://use.fontawesome.com/b4d97f0552.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css">
+</head>
+
+<style type="text/css">
+    .toolTip {
+      position: absolute;
+      display: none;
+      min-width: 80px;
+      height: auto;
+      background: none repeat scroll 0 0 #ffffff;
+      border: 1px solid #5f89ad;
+      padding: 14px;
+      text-align: center;
+    }
+    .bar {
+        fill: #5f89ad;
+    }
+
+</style>
+
+<body>
+<div class="maincontainer">
+     <div class="topcontainer header">
+        <div class="col cola">
+            <div class="logo">
+                <a href="{{ url_for('home') }}"><img src="{{ url_for('static',filename='new/images/logo2.png') }}" alt=""/></a>
+            </div>
+        </div><div class="col colb">
+            <div class=" navi">
+                <ul>
+                    
+                </ul>
+            </div>
+        </div><!-- Col b / Search -->
+    </div><!--Top Container -->
+
+    <div class="bottomcontainer hpbottom" style="padding: 10px;">
+        <div id="skills_chart">
+            <h2 style="font-family: sans-serif;">Popular Job Titles: </h2>
+            <svg class="skills_bar" width="430" height="480"></svg>
+            <br>
+        </div>
+    </div>
+    <!-- Bottom Container -->
+</div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+<script src="http://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript" src="{{ url_for('static',filename='d3.layout.cloud.js') }}"></script>
+<script type="text/javascript">
+    var DATA_URL = '/data/';
+    //******************************************//
+    //                                          //
+    //              SKILLS BAR CHART            //
+    //                                          //
+    //******************************************//
+    function drawPopularJobs(data){
+        data = data.slice(0,20);
+        //clear previous
+        $("#skills_bar").html("");
+        $("#skills-g").remove();
+
+        // console.log("skills data:", data);
+        //sort bars based on value
+        var svg = d3.select("svg.skills_bar")
+            .style("margin-left", "auto")
+            .style("margin-right", "auto");
+        var margin = {top: 20, right: 20, bottom: 30, left: 180},
+            width = +svg.attr("width") - margin.left - margin.right,
+            height = +480 - margin.top - margin.bottom;
+      
+        var tooltip = d3.select("#skills_chart").append("div").attr("class", "toolTip");
+          
+        var x = d3.scaleLinear().range([0, width]);
+        var y = d3.scaleBand().range([height, 0]);
+
+        var g = svg.append("g")
+            .attr("id", "skills-g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        data.sort(function(a, b) { return a.value - b.value; });
+
+        x.domain([0, d3.max(data, function(d) { return d.value; })]);
+        y.domain(data.map(function(d) { return d.name; })).padding(0.1);
+
+        //x axis
+        // g.append("g")
+        //     .attr("class", "x axis")
+        //     .attr("transform", "translate(0," + height + ")")
+        //     .call(d3.axisBottom(x).ticks(5).tickFormat(function(d) { return parseInt(d / 1000); }).tickSizeInner([-height]));
+
+        g.append("g")
+            .attr("class", "y axis")
+            .call(d3.axisLeft(y));
+        g.selectAll("g.tick").select("text")
+            .attr("font-size", "11px")
+            .attr("class", "popular_jobs")
+            .style("cursor", "pointer");
+
+        g.selectAll(".bar")
+            .data(data)
+          .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", 0)
+            .attr("height", y.bandwidth())
+            .attr("y", function(d) { return y(d.name); })
+            .attr("width", function(d) { return x(d.value); })
+            .on("mousemove", function(d){
+                tooltip
+                  .style("left", d3.event.pageX -50 + "px")
+                  .style("top", d3.event.pageY -120 + "px")
+                  .style("display", "inline-block")
+                  .html((d.name) + "<br>Count: " + (d.value));
+            })
+                .on("mouseout", function(d){ tooltip.style("display", "none");});
+
+        d3.selectAll("text.popular_jobs")
+            .on("click", function(job_name){
+                window.location.href = '/job/' + job_name;
+            });
+        
+    }
+    $.get(DATA_URL + 'job/popular/', function(bar_chart_data){
+        drawPopularJobs(bar_chart_data);
+    });
+    
+
+</script>
+</html>

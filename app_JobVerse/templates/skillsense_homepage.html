@@ -1,0 +1,212 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+	<title>SkillSense | Homepage</title>
+
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='new/css/skillsense_homepage.css') }}" />
+
+</head>
+<style>
+
+.ui-autocomplete { font-size: 10px; max-height: 500px; overflow-y: auto; overflow-x: hidden;}  
+
+</style>
+<body>
+    <div class="main-content">
+        <div class="form-login" method="post" action="#" >
+            <div class="form-sign-in-with-social" style=" max-width: 240px; ">
+                <div class="form-row form-title-row">
+                    <span class="form-title">SkillSense</span>
+                </div>
+
+            <div class="greencontainer" style=" margin: auto; ">
+                <a href="{{ url_for('skill_analysisbPHTML', rel_type='category') }}">
+    				<div class="box">
+    					<div class="padding">
+    						<h1>Job Category Analysis</h1>
+    						<p>Analyse the association of different Job Categories (e.g. Information Technology/ Administration) to Groups of Skills required for the Job Category </p>
+    					</div>
+    				</div></a><a href="{{ url_for('skill_analysisbPHTML', rel_type='role') }}" ><div class="box">
+    					<div class="padding">
+    						<h1>Job Role Analysis</h1>
+    						<p>Analyse the association of Job Roles (e.g. Analyst/ Director) to Groups of Skills required for the Job Role </p>
+    					</div>
+    				</div></a><a href="{{ url_for('skill_analysisbPHTML', rel_type='skill_group') }}"><div class="box">
+    					<div class="padding">
+    						<h1>Skill Group Analysis</h1>
+    						<p>Analyse and visualising relationships between Groups of SKills.<br>Also shows how different Skills are related to each other</p>
+    					</div>
+    				</div></a><a href="{{ url_for('jobTitleSearch') }}"><div class="box">
+    					<div class="padding">
+    						<h1>Job Affinity Analysis</h1>
+    						<p>Analyze similar Job Titles and the Skills associated to the Job </p>
+    					</div>
+    				</div></a>
+    			</div>
+            </div>
+            <div class="form-log-in-with-email">
+                <div class="form-mini">
+                    <div class="form-row" style=" display: block; ">
+                        <div class="form-radio-buttons" >
+                            <div class="searchby">
+                                <label>
+                                    <input id="sg" class="input-radio" type="radio" name="radio"><span>Search by Skill Group</span>
+                                    <div class="searchby_content div_sg">
+                                        <div class="form-row">
+                                            <input id="search_sg" class="ui-autocomplete-input width_fill" type="text" name="name" placeholder="Enter Skill Group" required>
+                                        </div>
+                                        <div class="form-row" style=" display: block;">
+                                            <label>
+                                                <select id="rel_type" name="dropdown" class="dropdown">
+                                                    <option value="None">Choose a relation type</option>
+                                                    <option value="category">Job Category Analysis</option>
+                                                    <option value="role">Job Role Analysis</option>
+                                                    <option value="skill_group">Skill Group Analysis</option>
+                                                </select>
+                                            </label>
+                                        </div>
+                                        <div class="form-row form-last-row">
+                                            <button id="button_sg" type="submit" class="width_fill" href="">Search</button>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="searchby">
+                                <label>
+                                    <input id="category" class="input-radio" type="radio" name="radio">
+                                    <span>Search by Job Category</span>
+                                    <div class="searchby_content div_category">
+                                        <div class="form-row">
+                                            <input id="search_cat" type="text" name="name" placeholder="Enter Job Category">
+                                        </div>
+                                        <div class="form-row form-last-row">
+                                            <button id="button_cat" type="submit" class="width_fill" href="">Search</button>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="searchby">
+                                <label>
+                                    <input id="role" class="input-radio" type="radio" name="radio">
+                                    <span>Search by Job Role</span>
+                                    <div class="searchby_content div_role">
+                                        <div class="form-row">
+                                            <input id="search_role" type="text" name="name" placeholder="Enter Job Role">
+                                        </div>
+                                        <div class="form-row form-last-row">
+                                            <button id="button_role" type="submit" class="width_fill" href="">Search</button>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="searchby">
+                                <label>
+                                    <input id="skill" class="input-radio" type="radio" name="radio">
+                                    <span>Search by Skill</span>
+                                    <div class="searchby_content div_skill">
+                                        <div class="form-row">
+                                            <input id="search_skill" type="text" name="name" placeholder="Enter Skill">
+                                        </div>
+                                        <div class="form-row form-last-row">
+                                            <button id="button_s" type="submit" class="width_fill" href="">Search</button>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/themes/smoothness/jquery-ui.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script type="text/javascript">
+var WIN_URL = '';
+
+var skillgp_list = {{ sg_list|safe }};
+var skill_list = {{ skill_list|safe }};
+var domain_list = {{ domain_list|safe }};
+var function_list = {{ function_list|safe }};
+
+$(function () {
+    var input_sg = document.getElementById("search_sg");
+    $("#search_sg").change(function(d){
+        if ($.inArray(capitalize_Words($('#search_sg').val()), skillgp_list) < 0) {
+            input_sg.setCustomValidity("Invalid Skill Group Entered!");
+          } else {
+            input_sg.setCustomValidity("");
+          }
+    });
+    $("#search_sg").autocomplete({
+        source: skillgp_list })
+    $("#button_sg").click(function(d){
+        window.location.href = WIN_URL + '/skill_analysis/' + $('#rel_type').val() +'='+ $('#search_sg').val();
+    });
+
+    var input_cat = document.getElementById("search_cat");
+    $("#search_cat").change(function(d){
+        if ($.inArray(capitalize_Words($('#search_cat').val()), domain_list) < 0) {
+            input_cat.setCustomValidity("Invalid Skill Group Entered!");
+          } else {
+            input_cat.setCustomValidity("");
+          }
+    });
+    $("#search_cat").autocomplete({
+        source: domain_list })
+    $("#button_cat").click(function(d){
+        window.location.href = WIN_URL + '/skill_analysis/category='+ $('#search_cat').val();
+    });
+
+    var input_fctn = document.getElementById("search_role");
+    $("#search_role").change(function(d){
+        if ($.inArray(capitalize_Words($('#search_role').val()), function_list) < 0) {
+            input_fctn.setCustomValidity("Invalid Skill Group Entered!");
+          } else {
+            input_fctn.setCustomValidity("");
+          }
+    });
+    $("#search_role").autocomplete({
+        source: function_list })
+    $("#button_role").click(function(d){
+        window.location.href = WIN_URL + '/skill_analysis/role='+ $('#search_role').val();
+    });
+
+    var input_skill = document.getElementById("search_skill");
+    $("#search_skill").change(function(d){
+        if ($.inArray(capitalize_Words($('#search_skill').val()), skill_list) < 0) {
+            input_skill.setCustomValidity("Invalid Skill Group Entered!");
+          } else {
+            input_skill.setCustomValidity("");
+          }
+    });
+    $("#search_skill").autocomplete({
+        source: skill_list })
+    $("#button_s").click(function(d){
+        // window.location.href = WIN_URL + '/skill_analysis/role='+ $('#search_role').val();
+        alert("This section is still under construction!");
+    });
+});
+
+//capitalize_Words 
+function capitalize_Words(str){
+    return str.replace(/\b\w+/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
+
+// For the first time render of page with jobtitle content
+// |tojson |safe marker for html render as string 
+d3.selectAll("input[type=radio]").on("change", function(d){
+    $("input[name=filter]").attr("checked", false);
+    $(".searchby_content").animate({ opacity: 0 }, 100 ).removeClass("display_block");
+    $(this).attr("checked", true).prop("checked", true);
+    $(".div_"+$(this).attr("id")).addClass("display_block").animate({ opacity: 1 }, 100 );
+});
+</script>
+</html>

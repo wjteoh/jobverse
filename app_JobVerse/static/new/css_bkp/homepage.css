@@ -1,0 +1,73 @@
+@charset "utf-8";
+/* CSS Document */
+
+html, body{
+	margin: 0;
+	padding: 0;
+	font-family: 'Open Sans', sans-serif;
+	font-size: 14px;
+	height: 100%;
+	width: 100%;
+	background-size: cover;
+	background-image: url(../images/bg2.jpg);
+	background-position: center;
+}
+
+
+.greencolor{ color: #18bd88; font-weight: bold;}
+.logo {max-width: 325px; width: 100%;}
+
+.clearboth { clear: both}
+
+.maincontainer{
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+	text-align: center;
+	width: 100%;
+	margin-left: 10%;
+	height: 550px;
+	max-width: 500px;
+}
+.homecontainer{
+	background-color: #ffffff;
+	box-shadow: 2px 2px 5px #888888;
+}
+
+.homecontainer .padding, .box .padding{
+	padding: 20px;
+}
+
+.box { display: inline-block; width: 49%; border: solid 1px #ffffff; 
+	background-color: #18bd88; min-height: 210px; overflow: auto; color: #ffffff; font-size: 12px; line-height: 14px; vertical-align: top}
+
+.box h1{ font-size: 20px; line-height: 20px;}
+
+a{text-decoration: none;}
+.box:hover{ background-color: #10815d;}
+
+.box2 { display: block; width: 100%; background-color: #18bd88; color: #ffffff; font-size: 14px; line-height: 18px; vertical-align: top}
+.box h2{ font-size: 28px; line-height: 28px;}
+@media screen and (max-width : 640px ){
+	.maincontainer{
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		text-align: center;
+		width: 90%;
+		
+		margin: 20px auto 0 auto;
+		height: none;
+		max-width: none;
+	}
+	
+	.box { display: block; width: 100%; border: solid 1px #ffffff; min-height: auto; overflow: none; color: #ffffff; font-size: 12px; line-height: 14px; vertical-align: top}
+	.box .padding{ padding: 10px 20px}
+
+}
+
