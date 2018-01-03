@@ -334,8 +334,8 @@ function drawGraph(jobtitle, graph) {
                 titleStr = '' + cur_link.target.popularity + ' out of ' + max_popularity + ' (max of all Related Job Titles)';
                 // linkStr = '<a id="' +cur_id+ '" class="toptitles" href="javascript:detailView(\'' +cur_link.target.name + '\')">';
                 linkStr = '<a id="' +cur_id+ '" class="toptitles" pop="'+cur_link.target.popularity+'" sim="'+cur_link.target.similarity+'" href="javascript:detailView(\'' +cur_link.target.name + '\')">';
-                linkStr += '<div group="' + cur_link.target.group+ '" class="scorectn"><div group="' + cur_link.target.group+ '" class="score2 '+pop+'"' +
-                ' title="' + titleStr+'"></div><div class="score2txt">'+ cur_link.target.name +'</div></div>' + '</a>';
+                linkStr += '<div group="' + cur_link.target.group+ '" class="scorectn"><div class="col_popularity"><div group="' + cur_link.target.group+ '" class="score2 '+pop+'"' +
+                ' title="' + titleStr+'"></div></div><div class="score2txt">'+ cur_link.target.name +'</div></div>' + '</a>';
 
                 $('#dvToptitles').append(linkStr);
 
@@ -450,8 +450,8 @@ function drawGraph(jobtitle, graph) {
             titleStr = '' + graphRec.nodes[i].popularity + ' out of ' + max_popularity + ' (max of all Related Job Titles)';
 
             linkStr = '<a id="' +graphRec.nodes[i].id+ '" class="toptitles" pop="'+graphRec.nodes[i].popularity+'" sim="'+graphRec.nodes[i].similarity+'" href="javascript:detailView(\'' +graphRec.nodes[i].name + '\')">';
-            linkStr += '<div group="' +graphRec.nodes[i].group+ '" class="scorectn"><div group="' +graphRec.nodes[i].group+ '" class="score2 '+pop+'"' +
-            ' title="' + titleStr+'"></div><div class="score2txt">'+graphRec.nodes[i].name +'</div></div>' + '</a>';
+            linkStr += '<div group="' +graphRec.nodes[i].group+ '" class="scorectn"><div class="col_popularity"><div group="' +graphRec.nodes[i].group+ '" class="score2 '+pop+'"' +
+            ' title="' + titleStr+'"></div></div><div class="score2txt">'+graphRec.nodes[i].name +'</div></div>' + '</a>';
             $('#dvToptitles').append(linkStr);
         }
 
@@ -653,10 +653,10 @@ function drawGraph(jobtitle, graph) {
                         // linkStr = '<a id="' +o.id+ '" class="toptitles" href="javascript:detailView(\'' +o.name + '\')">';
                         linkStr = '<a id="' +o.id+ '" class="toptitles" pop="'+o.popularity+'" sim="'+o.similarity+'" href="javascript:detailView(\'' +o.name + '\')">';
                        if (o.group != 0){
-                            linkStr += '<div group="' +o.group+ '" class="scorectn"><div group="' +o.group+ '" class="score2 '+pop+'" title="'+titleStr+'"></div><div class="score2txt">'+o.name +'</div></div>' + '</a>';
+                            linkStr += '<div group="' +o.group+ '" class="scorectn"><div class="col_popularity"><div group="' +o.group+ '" class="score2 '+pop+'" title="'+titleStr+'"></div></div><div class="score2txt">'+o.name +'</div></div>' + '</a>';
                         }
                         else{
-                            linkStr += '<div group="' +o.group+ '" class="scorectn"><div group="' +o.group+ '" class="score2 '+pop+'" title="'+titleStr+'"></div><div class="score2txt">'+o.name +'(center)</div></div>' + '</a>';
+                            linkStr += '<div group="' +o.group+ '" class="scorectn"><div class="col_popularity"><div group="' +o.group+ '" class="score2 '+pop+'" title="'+titleStr+'"></div></div><div class="score2txt">'+o.name +'(center)</div></div>' + '</a>';
                         }
 
                         $('#dvToptitles').append(linkStr);
@@ -699,7 +699,7 @@ function drawGraph(jobtitle, graph) {
                         titleStr = '' + o.popularity + ' out of ' + max_popularity + ' (max of all Related Job Titles)';
                         // linkStr = '<a id="' +o.id+ '" class="toptitles" href="javascript:detailView(\'' +o.name + '\')">';
                         linkStr = '<a id="' +o.id+ '" class="toptitles" pop="'+o.popularity+'" sim="'+o.similarity+'" href="javascript:detailView(\'' +o.name + '\')">';
-                        linkStr += '<div group="' +o.group+ '" class="scorectn"><div group="' +o.group+ '" class="score2 '+pop+'" title="'+titleStr+'"></div><div class="score2txt">'+o.name +'</div></div>' + '</a>';
+                        linkStr += '<div group="' +o.group+ '" class="scorectn"><div class="col_popularity"><div group="' +o.group+ '" class="score2 '+pop+'" title="'+titleStr+'"></div></div><div class="score2txt">'+o.name +'</div></div>' + '</a>';
                         $('#dvToptitles').append(linkStr);
                     }
                     return true; //doesnt matter

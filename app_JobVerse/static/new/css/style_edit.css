@@ -74,16 +74,18 @@ div.toptitles_hl{ background-color: #ccf8ff; border-radius: 10px; cursor: pointe
 .joblistsctn_upper_padding { padding: 20px 15px 0px 20px; position: relative; }
 .sectiontitle_label { position: relative; height: 43px; line-height: 1; }
 .joblists { position: relative;overflow: auto;height: 91%; }
-.joblists .padding { padding: 0px 0px 0 15px; }
+.joblists .padding { padding: 0px 0px 0 20px; }
 .skill2.skill_rel_hl{ background-color: #bbe2ff; -webkit-transition:all .3s; -moz-transition:all .3s; transition:all .3s;}
 #title_in_skillbar_CNTR { font-size: 13px; padding-left: 4.2em }
 #title_in_skillbar{ display: inline-block; font-size: 15px; font-weight: bold;}
 .bottomcontainer2 h1 { line-height: 1; padding-top: 5px; }
 .jobverse_sort { margin: 0; padding: 0px 4px; box-shadow: none;}
-.popty { width: 14%; position: relative; }
-.jobt { width: 50%; }
-.sort_lbl { width: 11%; text-align: end; }
+.popty { width: 16%; position: relative; }
+.col_popularity{ display: inline-block; width: 16%; }
+.jobt { width: 42%; }
+.sort_lbl { width: 13%; text-align: end; }
 .sort { position: relative; display: inline-block; width: 21% }
+.score2txt { margin-left: unset; }
 .container {     width: -webkit-fill-available;
     height: -webkit-fill-available;
     padding: 87px 0;
@@ -198,6 +200,7 @@ div.toptitles_hl{ background-color: #ccf8ff; border-radius: 10px; cursor: pointe
         width: 20%;
         position: relative;
     }
+    .col_popularity{ width: 20%; }
     .jobt {
         width: 33%;
     }
