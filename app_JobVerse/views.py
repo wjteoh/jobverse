@@ -19,12 +19,13 @@ data_dist = np.load(DATA_DIR + "master_dist_mtx.npy")
 title_id_f = pd.read_csv(DATA_DIR + 'titles_index.csv', keep_default_na=False)
 t_dict = dict(zip(title_id_f.id, title_id_f.title_name))
 id_t_dict = dict(zip(title_id_f.title_name, title_id_f.id))
+title_list = title_id_f.title_name.tolist()
+title_id_list = title_id_f.id.tolist()
 
 title_df = pd.read_csv(DATA_DIR + 'parsed_titles.csv', keep_default_na=False)
 positions = dict(zip(title_df.title, title_df.position))
 domains = dict(zip(title_df.title, title_df.domain))
 functions = dict(zip(title_df.title, title_df.pri_func))
-title_list = title_id_f.title_name.tolist()
 
 jobpost_df = pd.read_csv(DATA_DIR + 'doc_index_filter.csv', keep_default_na=False)
 
@@ -80,7 +81,7 @@ def getpopularJobsDATA():
     return jsonify(job_count_data)
 
 
-@app_Isc.route('/data/job/<jobtitle>')
+@app_Isc.route('/data/job/<path:jobtitle>')
 def getNetworkData(jobtitle):
     startJOB = time()
     
@@ -265,7 +266,7 @@ def getNetworkData(jobtitle):
     # return jsonify(json_prep)
 
 
-@app_Isc.route('/data/job/get_all_skill/<jobtitle>')  # for drawing skill cloud
+@app_Isc.route('/data/job/get_all_skill/<path:jobtitle>')  # for drawing skill cloud
 def getSkillsCSV(jobtitle):
     startSKILL = time()
     # SETTINGS
